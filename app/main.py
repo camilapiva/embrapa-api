@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.logging import logger
 from app.core.config import settings
+from app.api.auth_routes import router as auth_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -15,6 +16,8 @@ app = FastAPI(
     description="REST API to retrieve viticulture data from Embrapa.",
     lifespan=lifespan
 )
+
+app.include_router(auth_router)
 
 @app.get("/")
 def read_root():
