@@ -4,7 +4,7 @@ from app.core.auth import create_access_token
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-# Simulação de usuário (substitua futuramente por validação real)
+# Simulação de usuário
 fake_user = {"username": "admin", "password": "1234"}
 
 class LoginRequest(BaseModel):

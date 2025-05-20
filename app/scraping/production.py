@@ -21,22 +21,71 @@ def fetch_production_data(ano: int) -> list[dict]:
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")
-        table = soup.find("table")
+        table = soup.find("table", class_="tb_base tb_dados")
 
         if not table:
-            raise ValueError("No table found on the page.")
+            raise ValueError("Tabela principal não encontrada.")
 
-        df = pd.read_html(StringIO(str(table)))[0]
-        df.columns = df.columns.map(str).str.strip()
-        df = df.dropna(how="all")         # 🧽 Remove linhas completamente vazias
-        df = df.dropna(axis=1, how="all") # 🧽 Remove colunas completamente vazias
-        df["Ano"] = ano
-        
-        logger.info("Production data scraped successfully from Embrapa.")
+        tbody = table.find("tbody")
+        rows = tbody.find_all("tr") if tbody else []
 
-        # Substituição robusta de NaN por None
-        return df.replace({np.nan: None}).to_dict(orient="records")
+        current_category = None
+        data = []
+
+        for row in rows:
+            cols = row.find_all("td")
+            if not cols or len(cols) < 2:
+                continue
+
+            td_classes = [td.get("class", []) for td in cols]
+
+            # Verifica se é categoria (ambos td com classe tb_item)
+            if all("tb_item" in cls for cls in td_classes):
+                current_category = cols[0].get_text(strip=True)
+                continue
+
+            # Verifica se é subitem (ambos td com classe tb_subitem)
+            if all("tb_subitem" in cls for cls in td_classes):
+                produto = cols[0].get_text(strip=True)
+                quantidade = cols[1].get_text(strip=True).replace(".", "").replace(",", ".")
+
+                try:
+                    quantidade = float(quantidade) if quantidade != "-" else None
+                except ValueError:
+                    quantidade = None
+
+                data.append({
+                    "Categoria": current_category,
+                    "Produto": produto,
+                    "Quantidade (L.)": quantidade,
+                    "Ano": ano
+                })
+
+        # TOTAL
+        tfoot = table.find("tfoot", class_="tb_total")
+        if tfoot:
+            total_row = tfoot.find("tr")
+            if total_row:
+                tds = total_row.find_all("td")
+                if len(tds) == 2:
+                    label = tds[0].get_text(strip=True)
+                    value = tds[1].get_text(strip=True).replace(".", "").replace(",", ".")
+
+                    try:
+                        value = float(value) if value != "-" else None
+                    except ValueError:
+                        value = None
+
+                    data.append({
+                        "Categoria": "Total",
+                        "Produto": label,
+                        "Quantidade (L.)": value,
+                        "Ano": ano
+                    })
+
+        logger.info(f"{len(data)} registros extraídos para o ano {ano}.")
+        return data
 
     except Exception:
         logger.warning("Scraping failed. Trying fallback CSV...")
-        return load_production_csv()
+        return load_production_csv(ano)

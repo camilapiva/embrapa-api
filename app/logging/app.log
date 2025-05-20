@@ -1440,3 +1440,23 @@ AttributeError: Can only use .str accessor with string values!
 [2025-05-20 00:30:39,701] INFO in main: Embrapa API is shutting down.
 [2025-05-20 00:30:41,055] INFO in main: Embrapa API started in development mode.
 [2025-05-20 00:36:27,333] INFO in main: Embrapa API is shutting down.
+[2025-05-20 02:41:16,041] INFO in main: Embrapa API started in development mode.
+[2025-05-20 02:41:45,239] INFO in main: Embrapa API is shutting down.
+[2025-05-20 02:41:50,169] INFO in main: Embrapa API started in development mode.
+[2025-05-20 02:42:00,289] INFO in main: Embrapa API is shutting down.
+[2025-05-20 02:42:09,354] INFO in main: Embrapa API started in development mode.
+[2025-05-20 02:42:56,601] INFO in main: Embrapa API is shutting down.
+[2025-05-20 02:42:57,838] INFO in main: Embrapa API started in development mode.
+[2025-05-20 02:43:14,480] INFO in main: Embrapa API is shutting down.
+[2025-05-20 02:43:15,695] INFO in main: Embrapa API started in development mode.
+[2025-05-20 02:43:17,036] INFO in main: Embrapa API is shutting down.
+[2025-05-20 02:43:22,185] INFO in main: Embrapa API started in development mode.
+[2025-05-20 02:43:35,721] INFO in production: Production data scraped, structured, and total included.
+[2025-05-20 02:44:04,273] INFO in production: Production data scraped, structured, and total included.
+[2025-05-20 02:46:20,107] INFO in main: Embrapa API is shutting down.
+[2025-05-20 02:46:21,410] INFO in main: Embrapa API started in development mode.
+[2025-05-20 02:46:46,846] INFO in main: Embrapa API is shutting down.
+[2025-05-20 02:47:04,086] INFO in production: Production data scraped, structured, and total included.
+[2025-05-20 03:01:43,250] INFO in main: Embrapa API started in development mode.
+[2025-05-20 03:01:56,156] INFO in production: 48 registros extraídos para o ano 2022.
+[2025-05-20 03:05:56,426] INFO in main: Embrapa API is shutting down.

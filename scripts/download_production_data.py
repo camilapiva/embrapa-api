@@ -71,7 +71,7 @@ def fetch_year_data(year: int) -> pd.DataFrame:
         return pd.DataFrame(data)
 
     except Exception as e:
-        print(f"❌ Erro ao processar {year}: {e}")
+        print(f"Erro ao processar {year}: {e}")
         return None
 
 def main():
@@ -88,9 +88,9 @@ def main():
     if all_data:
         full_df = pd.concat(all_data, ignore_index=True)
         full_df.to_csv("data/production.csv", index=False, encoding="utf-8-sig")
-        print("✅ Dados salvos em data/production.csv")
+        print("Dados salvos em data/production.csv")
     else:
-        print("❌ Nenhum dado foi coletado.")
+        print("Nenhum dado foi coletado.")
 
 if __name__ == "__main__":
     main()
