@@ -7,7 +7,11 @@ class Settings(BaseSettings):
     debug: bool = False
 
     # Configurações da Embrapa
-    base_url: str
+    production_url: str
+    processing_url: str
+    commercialization_url: str
+    importation_url: str
+    exportation_url: str
 
     # JWT
     jwt_secret: str
