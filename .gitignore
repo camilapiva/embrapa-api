@@ -1,0 +1,9 @@
+# Evitar subir arquivos sensíveis
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+poetry.lock
+*.log
