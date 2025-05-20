@@ -1,14 +1,17 @@
 import httpx
 import pandas as pd
 import traceback
-import numpy as np  # ✅ Adicionado aqui
+import numpy as np
+from io import StringIO
 from bs4 import BeautifulSoup
+
 from app.core.config import settings
 from app.logging import logger
-from io import StringIO
+from app.utils.fallback import load_production_csv
 
-def fetch_production_data() -> list[dict]:
-    url = settings.production_url
+
+def fetch_production_data(ano: int) -> list[dict]:
+    url = f"{settings.production_url}&ano={ano}"
 
     try:
         headers = {
@@ -25,17 +28,15 @@ def fetch_production_data() -> list[dict]:
 
         df = pd.read_html(StringIO(str(table)))[0]
         df.columns = df.columns.map(str).str.strip()
-
         df = df.dropna(how="all")         # 🧽 Remove linhas completamente vazias
         df = df.dropna(axis=1, how="all") # 🧽 Remove colunas completamente vazias
-
+        df["Ano"] = ano
+        
         logger.info("Production data scraped successfully from Embrapa.")
 
         # Substituição robusta de NaN por None
         return df.replace({np.nan: None}).to_dict(orient="records")
 
     except Exception:
-        print("Error scraping production data:")
-        print(traceback.format_exc())
-        logger.error("Error scraping production data:\n" + traceback.format_exc())
-        raise
+        logger.warning("Scraping failed. Trying fallback CSV...")
+        return load_production_csv()
