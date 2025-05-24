@@ -24,3 +24,13 @@ def load_processing_csv(year: int, grape_type: ProcessingType) -> list[dict]:
     except Exception as e:
         logger.error(f"Failed to load fallback CSV for processing {year} ({grape_type}): {e}")
         return []
+    
+def load_exportation_csv(year: int, export_type: str) -> list[dict]:
+    try:
+        df = pd.read_csv("data/exportation.csv")
+        df = df[(df["Year"] == year) & (df["Type"] == export_type)]
+        logger.warning(f"Loaded fallback exportation data for year {year} and type {export_type}.")
+        return df.replace({pd.NA: None, pd.NaT: None}).to_dict(orient="records")
+    except Exception as e:
+        logger.error(f"Failed to load exportation fallback CSV for {year} - {export_type}: {e}")
+        return []

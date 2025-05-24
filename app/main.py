@@ -7,6 +7,8 @@ from app.api.auth_routes import router as auth_router
 from app.api.protected_routes import router as protected_router
 from app.api.production_routes import router as production_router
 from app.api.processing_routes import router as processing_router
+from app.api.exportation_routes import router as exportation_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -25,6 +27,8 @@ app.include_router(auth_router)
 app.include_router(protected_router)
 app.include_router(production_router)
 app.include_router(processing_router)
+app.include_router(exportation_router)
+
 
 @app.get("/")
 def read_root():
