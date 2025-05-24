@@ -1469,3 +1469,9 @@ AttributeError: Can only use .str accessor with string values!
 [2025-05-24 12:39:53,600] INFO in main: Embrapa API started in development mode.
 [2025-05-24 12:41:18,635] INFO in production: 52 registros extraídos para o ano 2020.
 [2025-05-24 12:48:52,037] INFO in main: Embrapa API is shutting down.
+[2025-05-24 16:03:20,941] INFO in main: Embrapa API started in development mode.
+[2025-05-24 16:06:37,641] INFO in main: Embrapa API is shutting down.
+[2025-05-24 16:06:39,107] INFO in main: Embrapa API started in development mode.
+[2025-05-24 16:06:58,688] INFO in main: Embrapa API is shutting down.
+[2025-05-24 16:06:59,939] INFO in main: Embrapa API started in development mode.
+[2025-05-24 16:07:05,299] INFO in main: Embrapa API is shutting down.

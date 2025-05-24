@@ -1,10 +1,9 @@
 import httpx
 import pandas as pd
-from bs4 import BeautifulSoup
-from io import StringIO
 import time
 import os
-
+from bs4 import BeautifulSoup
+from app.core.config import settings
 from app.scraping.helpers import clean_quantity
 
 # Tipos de uva disponíveis na interface
@@ -16,7 +15,7 @@ GRAPE_TYPES = {
 }
 
 def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
-    url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_03&subopcao={grape_type}&ano={year}"
+    url = f"{settings.processing_url}&subopcao={grape_type}&ano={year}"
     headers = {"User-Agent": "Mozilla/5.0"}
 
     try:
@@ -46,7 +45,7 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
                 current_category = label
             elif "tb_subitem" in td1.get("class", []):
                 data.append({
-                    "Type": GRAPE_TYPES[grape_type],
+                    "GrapeType": grape_type,
                     "Category": current_category,
                     "Cultivar": label,
                     "Quantity (kg)": clean_quantity(quantity_raw),
@@ -58,7 +57,7 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
             tds = total_row.find_all("td")
             if len(tds) == 2:
                 data.append({
-                    "Type": GRAPE_TYPES[grape_type],
+                    "GrapeType": grape_type,
                     "Category": "Total",
                     "Cultivar": tds[0].get_text(strip=True),
                     "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
