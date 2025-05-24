@@ -4,11 +4,8 @@ from app.core.auth import get_current_user
 
 router = APIRouter(prefix="/production", tags=["Production"])
 
-@router.get("/")
-def get_production_data(
-    ano: int = Query(..., ge=1970, le=2023),
-    user: dict = Depends(get_current_user)
-    ):
+@router.get("/", dependencies=[Depends(get_current_user)])
+def get_production_data(ano: int = Query(..., ge=1970, le=2023)):
     """
     Retorna os dados de produção vitivinícola para o ano especificado.
     Exemplo: /production/?ano=2022
