@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from app.scraping.production import fetch_production_data
+from app.core.auth import get_current_user
 
 router = APIRouter(prefix="/production", tags=["Production"])
 
 @router.get("/")
-def get_production_data(ano: int = Query(..., ge=1970, le=2023)):
+def get_production_data(
+    ano: int = Query(..., ge=1970, le=2023),
+    user: dict = Depends(get_current_user)
+    ):
     """
     Retorna os dados de produção vitivinícola para o ano especificado.
     Exemplo: /production/?ano=2022
