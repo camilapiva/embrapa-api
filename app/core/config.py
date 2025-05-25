@@ -1,22 +1,22 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    # Configurações gerais
+    # General configuration
     project_name: str
     environment: str = "development"
     debug: bool = False
 
-    # URL base da Embrapa
+    # Embrapa base URL
     base_url: str
 
-    # Configurações de JWT
+    # JWT configuration
     jwt_secret: str
     jwt_algorithm: str
     access_token_expire_minutes: int
 
     model_config = SettingsConfigDict(env_file=".env")
 
-    # Propriedades para construir URLs específicas
+    # URL builders for each dataset
     @property
     def production_url(self) -> str:
         return f"{self.base_url}?opcao=opt_02"
