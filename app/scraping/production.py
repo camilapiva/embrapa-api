@@ -26,9 +26,9 @@ def fetch_production_data(year: int) -> list[dict]:
         data = parse_category_table(
             table=table,
             year=year,
-            category_label="Categoria",
-            subcategory_label="Produto",
-            quantity_label="Quantidade (L.)"
+            category_label="Category",
+            subcategory_label="Product",
+            quantity_label="Quantity (L.)"
         )
 
         logger.info(f"{len(data)} registros extraídos para o ano {year}.")

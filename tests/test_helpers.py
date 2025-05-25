@@ -38,11 +38,11 @@ def test_extract_data_rows():
     assert len(result) == 3
 
     assert result[0] == {
-        "Categoria": "VINHO DE MESA",
-        "Produto": "Tinto",
-        "Quantidade (L.)": 123456.0,
-        "Ano": 2022
+        "Category": "VINHO DE MESA",
+        "Product": "Tinto",
+        "Quantity (L.)": 123456.0,
+        "Year": 2022
     }
-    assert result[2]["Categoria"] == "Total"
-    assert result[2]["Produto"] == "Total"
-    assert result[2]["Quantidade (L.)"] == 912456.0
+    assert result[2]["Category"] == "Total"
+    assert result[2]["Product"] == "Total"
+    assert result[2]["Quantity (L.)"] == 912456.0
