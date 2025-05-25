@@ -7,10 +7,10 @@ def test_scraping_returns_data_for_valid_year():
     assert isinstance(data, list)
     assert len(data) > 0
 
-    # Mostra os 3 primeiros registros para debug se falhar novamente
+    # Show the first 3 logs for debugging if it fails again
     print(data[:3])
 
-    # Valida se os dados esperados existem (resiliente)
+    # Validates if the expected data exists
     valid = [
         item for item in data
         if isinstance(item, dict)

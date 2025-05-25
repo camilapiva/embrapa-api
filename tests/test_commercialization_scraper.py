@@ -7,7 +7,7 @@ def test_scraping_returns_data_for_valid_year():
     assert isinstance(data, list)
     assert len(data) > 0
 
-    # Verifica os campos esperados
+    # Check structure of the data
     sample = data[0]
     assert "Category" in sample
     assert "Product" in sample

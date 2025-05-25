@@ -6,7 +6,7 @@ client = TestClient(app)
 def test_exportation_without_token():
     """Acesso à /exportation sem token deve falhar"""
     response = client.get("/exportation/?year=2022&export_type=subopt_01")
-    assert response.status_code in [401, 403]  # depende da política do FastAPI
+    assert response.status_code in [401, 403]
 
 def test_exportation_with_token():
     """Acesso à /exportation com token válido deve funcionar"""

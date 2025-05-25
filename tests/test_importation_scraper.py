@@ -5,6 +5,7 @@ def test_scraping_returns_data_for_valid_year_and_type():
     assert isinstance(data, list)
     assert len(data) > 0
 
+    # Check structure of the data
     sample = data[0]
     assert "Country" in sample
     assert "Quantity (kg)" in sample
