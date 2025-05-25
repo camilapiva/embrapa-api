@@ -41,9 +41,18 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
             td1, td2 = cols
             label = td1.get_text(strip=True)
             quantity_raw = td2.get_text(strip=True)
+            quantity = clean_quantity(quantity_raw)
 
             if "tb_item" in td1.get("class", []):
                 current_category = label
+                if quantity_raw.strip():
+                    data.append({
+                        "GrapeType": GRAPE_TYPES.get(grape_type, grape_type),
+                        "Category": current_category,
+                        "Cultivar": "Total",
+                        "Quantity (kg)": quantity,
+                        "Year": year
+                    })
             elif "tb_subitem" in td1.get("class", []):
                 data.append({
                     "GrapeType": GRAPE_TYPES.get(grape_type, grape_type),
@@ -81,7 +90,6 @@ def main():
             df = fetch_year_type_data(year, grape_type)
             if df is not None:
                 all_data.append(df)
-            time.sleep(1)
 
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
