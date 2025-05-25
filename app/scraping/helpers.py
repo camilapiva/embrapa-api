@@ -1,3 +1,4 @@
+import re
 from typing import Optional
 from bs4 import Tag
 from app.logging.logger import setup_logger
@@ -8,8 +9,14 @@ def clean_quantity(value: str) -> Optional[float]:
     """Converts quantity string to float. Returns None for any invalid or non-numeric value."""
     if not value:
         return None
+    
+    cleaned = value.strip().replace(".", "").replace(",", ".")
+
+    if not re.match(r'^-?\d+(\.\d+)?$', cleaned):
+        return None
+
     try:
-        return float(value.strip().replace(".", "").replace(",", "."))
+        return float(cleaned)
     except ValueError:
         logger.warning(f"Invalid quantity format: {value}")
         return None
