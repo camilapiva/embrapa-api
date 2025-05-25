@@ -4,8 +4,11 @@ import sys
 from logging.handlers import RotatingFileHandler
 
 def setup_logger(name: str) -> logging.Logger:
+    log_path = os.path.join(os.getcwd(), "logs", "app.log")
+
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
+    logger.propagate = False
 
     if logger.handlers:
         return logger  # Avoid adding handlers multiple times
@@ -23,9 +26,7 @@ def setup_logger(name: str) -> logging.Logger:
     # File handler with rotation
     log_dir = os.path.join(os.getcwd(), "logs")
     os.makedirs(log_dir, exist_ok=True)
-    file_path = os.path.join(log_dir, "app.log")
-
-    file_handler = RotatingFileHandler(file_path, maxBytes=1_000_000, backupCount=3)
+    file_handler = RotatingFileHandler(log_path, maxBytes=1_000_000, backupCount=3)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
