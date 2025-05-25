@@ -44,3 +44,13 @@ def load_importation_csv(year: int, import_type: str) -> list[dict]:
     except Exception as e:
         logger.error(f"Failed to load fallback importation CSV: {e}")
         return []
+
+def load_commercialization_csv(year: int) -> list[dict]:
+    try:
+        df = pd.read_csv("data/commercialization.csv")
+        df = df[df["Year"] == year]
+        logger.warning(f"Loaded fallback commercialization data for year {year}.")
+        return df.replace({np.nan: None}).to_dict(orient="records")
+    except Exception as e:
+        logger.error(f"Failed to load fallback CSV for commercialization {year}: {e}")
+        return []
