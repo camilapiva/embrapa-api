@@ -10,7 +10,7 @@ from app.logging.logger import setup_logger
 logger = setup_logger(__name__)
 
 GRAPE_TYPES = {
-    "subopt_01": "Vinifera",
+    "subopt_01": "Viniferas",
     "subopt_02": "Americanas e híbridas",
     "subopt_03": "Uvas de mesa",
     "subopt_04": "Sem classificação"
@@ -46,7 +46,7 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
                 current_category = label
             elif "tb_subitem" in td1.get("class", []):
                 data.append({
-                    "GrapeType": grape_type,
+                    "GrapeType": GRAPE_TYPES.get(grape_type, grape_type),
                     "Category": current_category,
                     "Cultivar": label,
                     "Quantity (kg)": clean_quantity(quantity_raw),
@@ -58,7 +58,7 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
             tds = total_row.find_all("td")
             if len(tds) == 2:
                 data.append({
-                    "GrapeType": grape_type,
+                    "GrapeType": GRAPE_TYPES.get(grape_type, grape_type),
                     "Category": "Total",
                     "Cultivar": tds[0].get_text(strip=True),
                     "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
