@@ -5,11 +5,11 @@ from app.logging.logger import setup_logger
 logger = setup_logger(__name__)
 
 def clean_quantity(value: str) -> Optional[float]:
-    """Converts quantity string to float, handling '-' and empty values."""
-    if not value or value.strip() == "-":
+    """Converts quantity string to float. Returns None for any invalid or non-numeric value."""
+    if not value:
         return None
     try:
-        return float(value.replace(".", "").replace(",", "."))
+        return float(value.strip().replace(".", "").replace(",", "."))
     except ValueError:
         logger.warning(f"Invalid quantity format: {value}")
         return None
