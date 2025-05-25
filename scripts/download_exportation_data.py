@@ -4,6 +4,9 @@ import time
 import os
 from bs4 import BeautifulSoup
 from app.scraping.helpers import clean_quantity
+from app.logging.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 EXPORT_TYPES = {
     "subopt_01": "Vinhos de mesa",
@@ -19,12 +22,11 @@ def fetch_year_export_data(year: int, export_type: str) -> pd.DataFrame:
     try:
         response = httpx.get(url, headers=headers, timeout=10)
         response.raise_for_status()
-
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find("table", {"class": "tb_base tb_dados"})
 
         if not table:
-            print(f"Tabela não encontrada: {year} - {export_type}")
+            logger.warning(f"Table not found for year {year} - type {export_type}")
             return None
 
         rows = table.select("tbody tr")
@@ -58,7 +60,7 @@ def fetch_year_export_data(year: int, export_type: str) -> pd.DataFrame:
         return pd.DataFrame(data)
 
     except Exception as e:
-        print(f"Erro ao processar {year}-{export_type}: {e}")
+        logger.error(f"Error processing exportation for year {year} - type {export_type}: {e}")
         return None
 
 def main():
@@ -67,7 +69,7 @@ def main():
 
     for year in range(1970, 2024):
         for export_type in EXPORT_TYPES:
-            print(f"Coletando {year} - {export_type}")
+            logger.info(f"Collecting exportation data for year {year} - type {export_type}...")
             df = fetch_year_export_data(year, export_type)
             if df is not None:
                 all_data.append(df)
@@ -76,9 +78,9 @@ def main():
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
         final_df.to_csv("data/exportation.csv", index=False, encoding="utf-8-sig")
-        print("Arquivo exportation.csv gerado.")
+        logger.info("File saved to data/exportation.csv")
     else:
-        print("Nenhum dado coletado.")
+        logger.warning("No exportation data was collected.")
 
 if __name__ == "__main__":
     main()

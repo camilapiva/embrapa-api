@@ -5,8 +5,10 @@ import os
 from bs4 import BeautifulSoup
 from app.core.config import settings
 from app.scraping.helpers import clean_quantity
+from app.logging.logger import setup_logger
 
-# Tipos de uva disponíveis na interface
+logger = setup_logger(__name__)
+
 GRAPE_TYPES = {
     "subopt_01": "Vinifera",
     "subopt_02": "Americanas e híbridas",
@@ -25,14 +27,13 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
         table = soup.find("table", {"class": "tb_base tb_dados"})
 
         if not table:
-            print(f"Tabela não encontrada: {year} - {grape_type}")
+            logger.warning(f"Table not found for year {year} - type {grape_type}")
             return None
 
-        rows = table.select("tbody tr")
         data = []
         current_category = None
 
-        for row in rows:
+        for row in table.select("tbody tr"):
             cols = row.find_all("td")
             if len(cols) != 2:
                 continue
@@ -67,7 +68,7 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
         return pd.DataFrame(data)
 
     except Exception as e:
-        print(f"Erro ao processar {year}-{grape_type}: {e}")
+        logger.error(f"Error processing for year {year} - type {grape_type}: {e}")
         return None
 
 def main():
@@ -76,7 +77,7 @@ def main():
 
     for year in range(1970, 2024):
         for grape_type in GRAPE_TYPES:
-            print(f"🔄 {year} - {grape_type}")
+            logger.info(f"Collecting processing data for year {year} - type {grape_type}...")
             df = fetch_year_type_data(year, grape_type)
             if df is not None:
                 all_data.append(df)
@@ -85,9 +86,9 @@ def main():
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
         final_df.to_csv("data/processing.csv", index=False, encoding="utf-8-sig")
-        print("Dados salvos em data/processing.csv")
+        print("File saved to data/processing.csv")
     else:
-        print("Nenhum dado foi coletado.")
+        print("No processing data was collected.")
 
 if __name__ == "__main__":
     main()

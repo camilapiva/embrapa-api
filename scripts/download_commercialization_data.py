@@ -4,6 +4,9 @@ import time
 import os
 from bs4 import BeautifulSoup
 from app.scraping.helpers import clean_quantity
+from app.logging.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 def fetch_commercialization_data(year: int) -> pd.DataFrame:
     url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_04&ano={year}"
@@ -12,11 +15,11 @@ def fetch_commercialization_data(year: int) -> pd.DataFrame:
     try:
         response = httpx.get(url, headers=headers, timeout=10)
         response.raise_for_status()
-
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find("table", {"class": "tb_base tb_dados"})
+
         if not table:
-            print(f"Table not found for year {year}")
+            logger.warning(f"Table not found for year {year}")
             return None
 
         data = []
@@ -41,7 +44,6 @@ def fetch_commercialization_data(year: int) -> pd.DataFrame:
                     "Year": year
                 })
 
-        # linha total
         total_row = table.select_one("tfoot tr")
         if total_row:
             tds = total_row.find_all("td")
@@ -56,7 +58,7 @@ def fetch_commercialization_data(year: int) -> pd.DataFrame:
         return pd.DataFrame(data)
 
     except Exception as e:
-        print(f"Error processing year {year}: {e}")
+        logger.error(f"Error processing commercialization for year {year}: {e}")
         return None
 
 def main():
@@ -64,7 +66,7 @@ def main():
     all_data = []
 
     for year in range(1970, 2024):
-        print(f"Collecting data for {year}...")
+        logger.info(f"Collecting commercialization data for year {year}...")
         df = fetch_commercialization_data(year)
         if df is not None:
             all_data.append(df)
@@ -73,9 +75,9 @@ def main():
     if all_data:
         final_df = pd.concat(all_data, ignore_index=True)
         final_df.to_csv("data/commercialization.csv", index=False, encoding="utf-8-sig")
-        print("File saved to data/commercialization.csv")
+        logger.info("File saved to data/commercialization.csv")
     else:
-        print("No data was collected.")
+        logger.warning("No commercialization data was collected.")
 
 if __name__ == "__main__":
     main()
