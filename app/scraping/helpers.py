@@ -63,8 +63,19 @@ def parse_category_table(table: Tag, year: int, category_label: str, subcategory
             continue
         td1, td2 = tds
 
+        label = td1.get_text(strip=True)
+        quantity_raw = td2.get_text(strip=True)
+        quantity = clean_quantity(quantity_raw)
+
         if "tb_item" in td1.get("class", []):
-            current_category = td1.get_text(strip=True)
+            current_category = label
+            if quantity_raw.strip():
+                data.append({
+                    category_label: current_category,
+                    subcategory_label: "Total",
+                    quantity_label: quantity,
+                    "Year": year
+                })
         elif "tb_subitem" in td1.get("class", []):
             data.append({
                 category_label: current_category,
