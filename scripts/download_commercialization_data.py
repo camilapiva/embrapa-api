@@ -36,6 +36,13 @@ def fetch_commercialization_data(year: int) -> pd.DataFrame:
 
             if "tb_item" in td1.get("class", []):
                 current_category = label
+                if quantity_raw:
+                    data.append({
+                        "Category": current_category,
+                        "Product": "Total",
+                        "Quantity (L.)": clean_quantity(quantity_raw),
+                        "Year": year
+                    })
             elif "tb_subitem" in td1.get("class", []):
                 data.append({
                     "Category": current_category,
