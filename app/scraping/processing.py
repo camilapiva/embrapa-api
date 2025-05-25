@@ -10,19 +10,17 @@ from app.utils.fallback import load_processing_csv
 
 logger = setup_logger(__name__)
 
-# Valid processing types from the Embrapa interface
 ProcessingType = Literal["subopt_01", "subopt_02", "subopt_03", "subopt_04"]
 
-def fetch_processing_data(year: int, grape_type: ProcessingType) -> list[dict]:
-    """
-    Scrapes processing data for the given year and grape type (sub-option).
+GRAPE_TYPES = {
+    "subopt_01": "Viníferas",
+    "subopt_02": "Americanas e híbridas",
+    "subopt_03": "Uvas de mesa",
+    "subopt_04": "Sem classificação"
+}
 
-    - grape_type:
-        subopt_01: Vinifera grapes
-        subopt_02: American and hybrid grapes
-        subopt_03: Table grapes
-        subopt_04: Unclassified grapes
-    """
+def fetch_processing_data(year: int, grape_type: ProcessingType) -> list[dict]:
+    """Scrapes processing data for the given year and grape type (sub-option)."""
     url = f"{settings.processing_url}&subopcao={grape_type}&ano={year}"
 
     try:
@@ -42,9 +40,12 @@ def fetch_processing_data(year: int, grape_type: ProcessingType) -> list[dict]:
             table=table,
             year=year,
             category_label="Category",
-            item_label="Cultivar",
+            subcategory_label="Cultivar",
             quantity_label="Quantity (kg)"
         )
+
+        for item in data:
+            item["GrapeType"] = GRAPE_TYPES[grape_type]
         
         logger.info(f"{len(data)} processing records extracted for year {year} - type {grape_type}.")
         return data
