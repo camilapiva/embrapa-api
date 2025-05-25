@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from app.logging import logger
+from app.logging.logger import setup_logger
 from app.core.config import settings
 
 from app.api.auth_routes import router as auth_router
@@ -10,6 +10,8 @@ from app.api.processing_routes import router as processing_router
 from app.api.exportation_routes import router as exportation_router
 from app.api.importation_routes import router as importation_router
 from app.api.commercialization_routes import router as commercialization_router
+
+logger = setup_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

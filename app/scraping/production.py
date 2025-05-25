@@ -2,10 +2,11 @@ import httpx
 from bs4 import BeautifulSoup
 
 from app.core.config import settings
-from app.logging import logger
+from app.logging.logger import setup_logger
 from app.utils.fallback import load_production_csv
 from app.scraping.helpers import parse_category_table
 
+logger = setup_logger(__name__)
 
 def fetch_production_data(year: int) -> list[dict]:
     url = f"{settings.production_url}&ano={year}"

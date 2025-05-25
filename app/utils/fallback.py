@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
-from app.logging import logger
+from app.logging.logger import setup_logger
 from typing import Literal
 
+logger = setup_logger(__name__)
 ProcessingType = Literal["subopt_01", "subopt_02", "subopt_03", "subopt_04"]
 
 def load_production_csv(year: int) -> list[dict]:
