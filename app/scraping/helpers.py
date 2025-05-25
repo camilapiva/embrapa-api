@@ -1,13 +1,17 @@
 from typing import Optional
 from bs4 import Tag
+from app.logging.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 def clean_quantity(value: str) -> Optional[float]:
-    """Converte um valor de quantidade para float, tratando '-' e valores vazios."""
+    """Converts quantity string to float, handling '-' and empty values."""
     if not value or value.strip() == "-":
         return None
     try:
         return float(value.replace(".", "").replace(",", "."))
     except ValueError:
+        logger.warning(f"Invalid quantity format: {value}")
         return None
 
 def is_total_row(produto: str) -> bool:
@@ -17,7 +21,7 @@ def is_category_row(produto: str, quantidade: str) -> bool:
     return quantidade.strip() == ""
 
 def extract_data_rows(rows, year: int) -> list[dict]:
-    """Extrai e organiza os dados da tabela HTML."""
+    """Parses raw rows from an HTML table (2-column format)."""
     data = []
     current_category = None
 
@@ -26,26 +30,27 @@ def extract_data_rows(rows, year: int) -> list[dict]:
         if len(cols) != 2:
             continue
 
-        produto = cols[0].get_text(strip=True)
-        quantidade_raw = cols[1].get_text(strip=True)
+        label = cols[0].get_text(strip=True)
+        quantity_raw = cols[1].get_text(strip=True)
 
-        if is_total_row(produto):
+        if is_total_row(label):
             data.append({
                 "Category": "Total",
                 "Product": "Total",
-                "Quantity (L.)": clean_quantity(quantidade_raw),
+                "Quantity (L.)": clean_quantity(quantity_raw),
                 "Year": year
             })
-        elif is_category_row(produto, quantidade_raw):
-            current_category = produto
+        elif is_category_row(label, quantity_raw):
+            current_category = label
         else:
             data.append({
                 "Category": current_category,
-                "Product": produto,
-                "Quantity (L.)": clean_quantity(quantidade_raw),
+                "Product": label,
+                "Quantity (L.)": clean_quantity(quantity_raw),
                 "Year": year
             })
 
+    logger.debug(f"{len(data)} rows extracted from 2-column table for year {year}")
     return data
 
 def parse_category_table(table: Tag, year: int, category_label: str, subcategory_label: str, quantity_label: str) -> list[dict]:
@@ -79,11 +84,12 @@ def parse_category_table(table: Tag, year: int, category_label: str, subcategory
                 "Year": year
             })
 
+    logger.debug(f"{len(data)} rows extracted from category table for year {year}")
     return data
 
 
 def parse_trade_table(table: Tag, year: int, trade_type: str) -> list[dict]:
-    """Extrai dados de tabelas das abas Exportação e Importação."""
+    """Parses trade tables (Exportation and Importation style with 3 columns)."""
     data = []
 
     for row in table.select("tbody tr"):
@@ -110,4 +116,5 @@ def parse_trade_table(table: Tag, year: int, trade_type: str) -> list[dict]:
                 "Year": year
             })
 
+    logger.debug(f"{len(data)} rows extracted from trade table for year {year} - {trade_type}")
     return data
