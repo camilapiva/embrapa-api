@@ -14,9 +14,9 @@ def test_scraping_returns_data_for_valid_year():
     valid = [
         item for item in data
         if isinstance(item, dict)
-        and "Produto" in item
-        and "Quantidade (L.)" in item
-        and "Ano" in item
+        and "Product" in item
+        and "Quantity (L.)" in item
+        and "Year" in item
     ]
 
     assert len(valid) > 0

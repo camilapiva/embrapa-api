@@ -8,14 +8,14 @@ def test_fallback_returns_data_for_valid_year():
     assert len(data) > 0, "A lista de dados está vazia"
 
     # Filtra apenas o ano solicitado
-    filtered = [item for item in data if item.get("Ano") == year]
+    filtered = [item for item in data if item.get("Year") == year]
     assert len(filtered) > 0, f"Nenhum dado encontrado para o ano {year}"
 
     # Verifica estrutura de um item
     sample = filtered[0]
-    assert "Produto" in sample
-    assert "Quantidade (L.)" in sample
-    assert "Ano" in sample
+    assert "Product" in sample
+    assert "Quantity (L.)" in sample
+    assert "Year" in sample
 
     # Verifica se a linha de total está presente
-    assert any(item.get("Produto") == "Total" for item in filtered), "Linha 'Total' não encontrada para o ano"
+    assert any(item.get("Product") == "Total" for item in filtered), "Linha 'Total' não encontrada para o ano"

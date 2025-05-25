@@ -8,7 +8,7 @@ ProcessingType = Literal["subopt_01", "subopt_02", "subopt_03", "subopt_04"]
 def load_production_csv(year: int) -> list[dict]:
     try:
         df = pd.read_csv("data/production.csv")
-        df = df[df["Ano"] == year]
+        df = df[df["Year"] == year]
         logger.warning(f"Loaded fallback production data for year {year}.")
         return df.replace({np.nan: None}).to_dict(orient="records")
     except Exception as e:

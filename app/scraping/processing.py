@@ -1,13 +1,11 @@
 import httpx
 import pandas as pd
-import traceback
-import numpy as np
 from bs4 import BeautifulSoup
 from typing import Literal
 
 from app.logging import logger
 from app.core.config import settings
-from app.scraping.helpers import parse_processing_table
+from app.scraping.helpers import parse_category_table
 from app.utils.fallback import load_processing_csv
 
 # Valid processing types from the Embrapa interface
@@ -38,7 +36,14 @@ def fetch_processing_data(year: int, grape_type: ProcessingType) -> list[dict]:
         if not table:
             raise ValueError("No table found on the page.")
 
-        data = parse_processing_table(table, year)
+        data = parse_category_table(
+            table=table,
+            year=year,
+            category_label="Category",
+            item_label="Cultivar",
+            quantity_label="Quantity (kg)"
+        )
+        
         logger.info(f"{len(data)} records extracted for year {year} - type {grape_type}.")
         return data
 

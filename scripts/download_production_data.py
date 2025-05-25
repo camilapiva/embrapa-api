@@ -1,7 +1,6 @@
 import httpx
 import pandas as pd
 from bs4 import BeautifulSoup
-from io import StringIO
 import time
 import os
 
@@ -19,7 +18,7 @@ def fetch_year_data(year: int) -> pd.DataFrame:
         table = soup.find("table", {"class": "tb_base tb_dados"})
 
         if not table:
-            print(f"⚠️ Tabela de dados não encontrada para {year}")
+            print(f"Table not found for year {year}")
             return None
 
         rows = table.find_all("tr")
@@ -31,47 +30,47 @@ def fetch_year_data(year: int) -> pd.DataFrame:
             if len(cols) != 2:
                 continue
 
-            produto = cols[0].get_text(strip=True)
-            quantidade_raw = cols[1].get_text(strip=True)
+            label = cols[0].get_text(strip=True)
+            quantity_raw = cols[1].get_text(strip=True)
 
             # Linha de total
-            if produto.lower() == "total":
+            if label.lower() == "total":
                 try:
-                    quantidade = float(quantidade_raw.replace(".", "").replace(",", "."))
+                    quantity  = float(quantity_raw.replace(".", "").replace(",", "."))
                 except ValueError:
-                    quantidade = None
+                    quantity  = None
 
                 data.append({
-                    "Categoria": "TOTAL",
-                    "Produto": "Total",
-                    "Quantidade (L.)": quantidade,
-                    "Ano": year
+                    "Category": "Total",
+                    "Product": "Total",
+                    "Quantity (L.)": quantity,
+                    "Year": year
                 })
                 continue
 
             # Se for uma categoria principal
-            if quantidade_raw == "":
-                current_category = produto
+            if quantity_raw == "":
+                current_category = label
                 continue
 
             # Subcategoria ou produto
             try:
-                quantidade = float(quantidade_raw.replace(".", "").replace(",", ".")) \
-                    if quantidade_raw != "-" else None
+                quantity = float(quantity_raw.replace(".", "").replace(",", ".")) \
+                    if quantity_raw != "-" else None
             except ValueError:
-                quantidade = None
+                quantity = None
 
             data.append({
-                "Categoria": current_category,
-                "Produto": produto,
-                "Quantidade (L.)": quantidade,
-                "Ano": year
+                "Category": current_category,
+                "Product": label,
+                "Quantity (L.)": quantity,
+                "Year": year
             })
 
         return pd.DataFrame(data)
 
     except Exception as e:
-        print(f"Erro ao processar {year}: {e}")
+        print(f"Error processing year {year}: {e}")
         return None
 
 def main():
@@ -79,18 +78,18 @@ def main():
     all_data = []
 
     for year in range(1970, 2024):
-        print(f"🔄 Coletando dados de {year}...")
+        print(f"Collecting data for {year}...")
         df = fetch_year_data(year)
         if df is not None:
             all_data.append(df)
-        time.sleep(1)  # Evita sobrecarga no servidor
+        time.sleep(1)  # avoid overloading the server
 
     if all_data:
         full_df = pd.concat(all_data, ignore_index=True)
         full_df.to_csv("data/production.csv", index=False, encoding="utf-8-sig")
-        print("Dados salvos em data/production.csv")
+        print("File saved to data/production.csv")
     else:
-        print("Nenhum dado foi coletado.")
+        print("No data was collected.")
 
 if __name__ == "__main__":
     main()

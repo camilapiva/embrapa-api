@@ -1,16 +1,14 @@
 import httpx
-import pandas as pd
-import traceback
 from bs4 import BeautifulSoup
 
 from app.core.config import settings
 from app.logging import logger
 from app.utils.fallback import load_production_csv
-from app.scraping.helpers import extract_data_rows
+from app.scraping.helpers import parse_category_table
 
 
-def fetch_production_data(ano: int) -> list[dict]:
-    url = f"{settings.production_url}&ano={ano}"
+def fetch_production_data(year: int) -> list[dict]:
+    url = f"{settings.production_url}&ano={year}"
 
     try:
         headers = {
@@ -25,15 +23,17 @@ def fetch_production_data(ano: int) -> list[dict]:
         if not table:
             raise ValueError("No table with class 'tb_base tb_dados' found.")
 
-        rows = table.find_all("tr")
-        data = extract_data_rows(rows, ano)
+        data = parse_category_table(
+            table=table,
+            year=year,
+            category_label="Categoria",
+            subcategory_label="Produto",
+            quantity_label="Quantidade (L.)"
+        )
 
-        if not data:
-            raise ValueError("Parsed table is empty.")
-
-        logger.info(f"{len(data)} registros extraídos para o ano {ano}.")
+        logger.info(f"{len(data)} registros extraídos para o ano {year}.")
         return data
 
     except Exception:
         logger.warning("Scraping failed. Trying fallback CSV...")
-        return load_production_csv(ano)
+        return load_production_csv(year)
