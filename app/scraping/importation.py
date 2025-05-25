@@ -18,7 +18,7 @@ def fetch_importation_data(year: int, import_type: str) -> list[dict]:
         if not table:
             raise ValueError("No table found on the page.")
 
-        data = parse_trade_table(table, year)
+        data = parse_trade_table(table, year, import_type)
         logger.info(f"{len(data)} importation records extracted for {year} - {import_type}")
         return data
 

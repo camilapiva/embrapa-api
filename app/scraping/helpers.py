@@ -86,3 +86,33 @@ def parse_processing_table(table: Tag, year: int) -> list[dict]:
             })
 
     return data
+
+def parse_trade_table(table: Tag, year: int, trade_type: str) -> list[dict]:
+    """Extrai dados de tabelas das abas Exportação e Importação."""
+    data = []
+
+    for row in table.select("tbody tr"):
+        cols = row.find_all("td")
+        if len(cols) != 3:
+            continue
+        data.append({
+            "Type": trade_type,
+            "Country": cols[0].get_text(strip=True),
+            "Quantity (kg)": clean_quantity(cols[1].get_text(strip=True)),
+            "Value (US$)": clean_quantity(cols[2].get_text(strip=True)),
+            "Year": year
+        })
+
+    total_row = table.select_one("tfoot tr")
+    if total_row:
+        tds = total_row.find_all("td")
+        if len(tds) == 3:
+            data.append({
+                "Type": trade_type,
+                "Country": "Total",
+                "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
+                "Value (US$)": clean_quantity(tds[2].get_text(strip=True)),
+                "Year": year
+            })
+
+    return data
