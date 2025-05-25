@@ -4,7 +4,7 @@ from app.main import app
 client = TestClient(app)
 
 def test_production_without_token():
-    response = client.get("/production/?ano=2022")
+    response = client.get("/production/?year=2022")
     assert response.status_code == 403
     assert response.json()["detail"] == "Not authenticated"
 
@@ -18,6 +18,6 @@ def test_production_with_token():
     token = login_response.json()["access_token"]
 
     headers = {"Authorization": f"Bearer {token}"}
-    response = client.get("/production/?ano=2022", headers=headers)
+    response = client.get("/production/", headers=headers, params={"year": 2022})
     assert response.status_code == 200
     assert isinstance(response.json(), list)
