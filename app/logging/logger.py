@@ -1,22 +1,32 @@
 import logging
 import os
+import sys
 from logging.handlers import RotatingFileHandler
 
-# Caminho para o arquivo de log
-log_path = os.path.join(os.getcwd(), "app", "logging", "app.log")
+def setup_logger(name: str) -> logging.Logger:
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
 
-# Criação do logger
-logger = logging.getLogger("embrapa_api")
-logger.setLevel(logging.DEBUG)
+    if logger.handlers:
+        return logger  # Avoid adding handlers multiple times
 
-# Handler para arquivo com rotação de 1MB, mantendo 3 arquivos antigos
-file_handler = RotatingFileHandler(log_path, maxBytes=1_000_000, backupCount=3)
-file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        "[%(asctime)s] %(levelname)s in %(name)s: %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
 
-# Formatação do log
-formatter = logging.Formatter("[%(asctime)s] %(levelname)s in %(module)s: %(message)s")
-file_handler.setFormatter(formatter)
+    # Stream handler (console)
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
 
-# Adiciona o handler apenas uma vez
-if not logger.hasHandlers():
+    # File handler with rotation
+    log_dir = os.path.join(os.getcwd(), "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    file_path = os.path.join(log_dir, "app.log")
+
+    file_handler = RotatingFileHandler(file_path, maxBytes=1_000_000, backupCount=3)
+    file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
+
+    return logger

@@ -3,7 +3,9 @@ from bs4 import BeautifulSoup
 from app.scraping.helpers import parse_trade_table
 from app.utils.fallback import load_importation_csv
 from app.core.config import settings
-from app.logging import logger
+from app.logging.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 def fetch_importation_data(year: int, import_type: str) -> list[dict]:
     url = f"{settings.importation_url}&subopcao={import_type}&ano={year}"
@@ -19,9 +21,9 @@ def fetch_importation_data(year: int, import_type: str) -> list[dict]:
             raise ValueError("No table found on the page.")
 
         data = parse_trade_table(table, year, import_type)
-        logger.info(f"{len(data)} importation records extracted for {year} - {import_type}")
+        logger.info(f"{len(data)} importation records extracted for year {year} - type {import_type}")
         return data
 
     except Exception:
-        logger.warning(f"Fallback used for importation {year} - {import_type}")
+        logger.warning(f"Failed to scrape importation data. Fallback enabled for importation year {year} - type {import_type}")
         return load_importation_csv(year, import_type)

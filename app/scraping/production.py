@@ -31,9 +31,9 @@ def fetch_production_data(year: int) -> list[dict]:
             quantity_label="Quantity (L.)"
         )
 
-        logger.info(f"{len(data)} registros extraídos para o ano {year}.")
+        logger.info(f"{len(data)} production records extracted for year {year}.")
         return data
 
     except Exception:
-        logger.warning("Scraping failed. Trying fallback CSV...")
+        logger.warning(f"Failed to scrape production data. Fallback enabled for production year {year}")
         return load_production_csv(year)

@@ -2,10 +2,11 @@ import httpx
 from bs4 import BeautifulSoup
 
 from app.core.config import settings
-from app.logging import logger
+from app.logging.logger import setup_logger
 from app.scraping.helpers import parse_category_table
 from app.utils.fallback import load_commercialization_csv
 
+logger = setup_logger(__name__)
 
 def fetch_commercialization_data(year: int) -> list[dict]:
     url = f"{settings.commercialization_url}&ano={year}"
@@ -29,9 +30,9 @@ def fetch_commercialization_data(year: int) -> list[dict]:
             quantity_label="Quantity (L.)"
         )
 
-        logger.info(f"{len(data)} commercialization records extracted for {year}")
+        logger.info(f"{len(data)} commercialization records extracted for year {year}")
         return data
 
     except Exception:
-        logger.warning(f"Fallback used for commercialization {year}")
+        logger.warning(f"Failed to scrape commercialization data. Fallback enabled for commercialization year {year}")
         return load_commercialization_csv(year)

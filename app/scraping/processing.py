@@ -3,10 +3,12 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from typing import Literal
 
-from app.logging import logger
+from app.logging.logger import setup_logger
 from app.core.config import settings
 from app.scraping.helpers import parse_category_table
 from app.utils.fallback import load_processing_csv
+
+logger = setup_logger(__name__)
 
 # Valid processing types from the Embrapa interface
 ProcessingType = Literal["subopt_01", "subopt_02", "subopt_03", "subopt_04"]
@@ -44,9 +46,9 @@ def fetch_processing_data(year: int, grape_type: ProcessingType) -> list[dict]:
             quantity_label="Quantity (kg)"
         )
         
-        logger.info(f"{len(data)} records extracted for year {year} - type {grape_type}.")
+        logger.info(f"{len(data)} processing records extracted for year {year} - type {grape_type}.")
         return data
 
     except Exception:
-        logger.warning("Failed to scrape processing data. Trying fallback CSV...")
+        logger.warning(f"Failed to scrape processing data. Fallback enabled for processing year {year} - type {grape_type}.")
         return load_processing_csv(year, grape_type)
