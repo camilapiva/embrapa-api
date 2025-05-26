@@ -7,10 +7,18 @@ from app.logging.logger import setup_logger
 from app.core.config import settings
 from app.scraping.helpers import parse_category_table
 from app.utils.fallback import load_processing_csv
+from app.models.processing_types import GrapeTypeEnum
 
 logger = setup_logger(__name__)
 
 ProcessingType = Literal["subopt_01", "subopt_02", "subopt_03", "subopt_04"]
+
+GRAPE_TYPE_TO_SUBOPT = {
+    GrapeTypeEnum.viniferas: "subopt_01",
+    GrapeTypeEnum.americanas_hibridas: "subopt_02",
+    GrapeTypeEnum.uvas_mesa: "subopt_03",
+    GrapeTypeEnum.sem_classificacao: "subopt_04",
+}
 
 GRAPE_TYPES = {
     "subopt_01": "Viníferas",
@@ -45,7 +53,7 @@ def fetch_processing_data(year: int, grape_type: ProcessingType) -> list[dict]:
         )
 
         for item in data:
-            item["GrapeType"] = GRAPE_TYPES[grape_type]
+            item["GrapeType"] = GRAPE_TYPES.get(grape_type, grape_type)
         
         logger.info(f"{len(data)} processing records extracted for year {year} - type {grape_type}.")
         return data
