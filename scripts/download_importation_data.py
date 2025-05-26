@@ -3,21 +3,23 @@ import pandas as pd
 import time
 import os
 from bs4 import BeautifulSoup
+from app.core.config import settings
 from app.scraping.helpers import clean_quantity
 from app.logging.logger import setup_logger
+from app.models.importation_types import ImportTypeEnum
 
 logger = setup_logger(__name__)
 
 IMPORT_TYPES = {
-    "subopt_01": "Vinhos de mesa",
-    "subopt_02": "Espumantes",
-    "subopt_03": "Uvas frescas",
-    "subopt_04": "Uvas passas",
-    "subopt_05": "Suco de uva"
+    "subopt_01": ImportTypeEnum.vinhos_de_mesa.value,
+    "subopt_02": ImportTypeEnum.espumantes.value,
+    "subopt_03": ImportTypeEnum.uvas_frescas.value,
+    "subopt_04": ImportTypeEnum.uvas_passas.value,
+    "subopt_05": ImportTypeEnum.suco_de_uva.value,
 }
 
 def fetch_year_import_data(year: int, import_type: str) -> pd.DataFrame:
-    url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_05&subopcao={import_type}&ano={year}"
+    url = f"{settings.importation_url}&subopcao={import_type}&ano={year}"
     headers = {"User-Agent": "Mozilla/5.0"}
 
     try:
@@ -31,25 +33,45 @@ def fetch_year_import_data(year: int, import_type: str) -> pd.DataFrame:
             return None
 
         data = []
+        current_type_label = IMPORT_TYPES.get(import_type, import_type)
+
         for row in table.select("tbody tr"):
             cols = row.find_all("td")
             if len(cols) != 3:
                 continue
 
-            data.append({
-                "Type": import_type,
-                "Country": cols[0].get_text(strip=True),
-                "Quantity (kg)": clean_quantity(cols[1].get_text(strip=True)),
-                "Value (US$)": clean_quantity(cols[2].get_text(strip=True)),
-                "Year": year
-            })
+            td1, td2, td3 = cols
+            country = td1.get_text(strip=True)
+            quantity = clean_quantity(td2.get_text(strip=True))
+            value = clean_quantity(td3.get_text(strip=True))
+            css_classes = td1.get("class", [])
 
+            if "tb_item" in css_classes:
+                # Total for import type (e.g. Vinhos de mesa)
+                data.append({
+                    "Type": current_type_label,
+                    "Country": country,
+                    "Quantity (kg)": quantity,
+                    "Value (US$)": value,
+                    "Year": year
+                })
+            elif "tb_subitem" in css_classes:
+                # Country-level rows
+                data.append({
+                    "Type": current_type_label,
+                    "Country": country,
+                    "Quantity (kg)": quantity,
+                    "Value (US$)": value,
+                    "Year": year
+                })
+
+        # Adiciona linha total do <tfoot>, se existir
         total_row = table.select_one("tfoot tr")
         if total_row:
             tds = total_row.find_all("td")
             if len(tds) == 3:
                 data.append({
-                    "Type": import_type,
+                    "Type": current_type_label,
                     "Country": "Total",
                     "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
                     "Value (US$)": clean_quantity(tds[2].get_text(strip=True)),
