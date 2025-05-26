@@ -6,14 +6,15 @@ from bs4 import BeautifulSoup
 from app.core.config import settings
 from app.scraping.helpers import clean_quantity
 from app.logging.logger import setup_logger
+from app.models.processing_types import GrapeTypeEnum
 
 logger = setup_logger(__name__)
 
 GRAPE_TYPES = {
-    "subopt_01": "Viniferas",
-    "subopt_02": "Americanas e híbridas",
-    "subopt_03": "Uvas de mesa",
-    "subopt_04": "Sem classificação"
+    "subopt_01": GrapeTypeEnum.viniferas.value,
+    "subopt_02": GrapeTypeEnum.americanas_hibridas.value,
+    "subopt_03": GrapeTypeEnum.uvas_mesa.value,
+    "subopt_04": GrapeTypeEnum.sem_classificacao.value,
 }
 
 def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:

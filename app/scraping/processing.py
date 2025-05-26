@@ -1,7 +1,6 @@
 import httpx
 import pandas as pd
 from bs4 import BeautifulSoup
-from typing import Literal
 
 from app.logging.logger import setup_logger
 from app.core.config import settings

@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
 from app.logging.logger import setup_logger
-from typing import Literal
+from app.models.processing_types import GrapeTypeEnum
 
 logger = setup_logger(__name__)
-ProcessingType = Literal["subopt_01", "subopt_02", "subopt_03", "subopt_04"]
 
 def load_production_csv(year: int) -> list[dict]:
     try:
@@ -16,7 +15,7 @@ def load_production_csv(year: int) -> list[dict]:
         logger.error(f"Failed to load production fallback CSV for year {year}: {e}")
         return []
 
-def load_processing_csv(year: int, grape_type: ProcessingType) -> list[dict]:
+def load_processing_csv(year: int, grape_type: str) -> list[dict]:
     try:
         df = pd.read_csv("data/processing.csv")
         df = df[(df["Year"] == year) & (df["GrapeType"] == grape_type)]
