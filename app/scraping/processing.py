@@ -11,8 +11,6 @@ from app.models.processing_types import GrapeTypeEnum
 
 logger = setup_logger(__name__)
 
-ProcessingType = Literal["subopt_01", "subopt_02", "subopt_03", "subopt_04"]
-
 GRAPE_TYPE_TO_SUBOPT = {
     GrapeTypeEnum.viniferas: "subopt_01",
     GrapeTypeEnum.americanas_hibridas: "subopt_02",
@@ -20,14 +18,9 @@ GRAPE_TYPE_TO_SUBOPT = {
     GrapeTypeEnum.sem_classificacao: "subopt_04",
 }
 
-GRAPE_TYPES = {
-    "subopt_01": "Viníferas",
-    "subopt_02": "Americanas e híbridas",
-    "subopt_03": "Uvas de mesa",
-    "subopt_04": "Sem classificação"
-}
+GRAPE_TYPES = {v: k.value for k, v in GRAPE_TYPE_TO_SUBOPT.items()}
 
-def fetch_processing_data(year: int, grape_type: ProcessingType) -> list[dict]:
+def fetch_processing_data(year: int, grape_type: str) -> list[dict]:
     """Scrapes processing data for the given year and grape type (sub-option)."""
     url = f"{settings.processing_url}&subopcao={grape_type}&ano={year}"
 
