@@ -44,28 +44,15 @@ def fetch_year_import_data(year: int, import_type: str) -> pd.DataFrame:
             country = td1.get_text(strip=True)
             quantity = clean_quantity(td2.get_text(strip=True))
             value = clean_quantity(td3.get_text(strip=True))
-            css_classes = td1.get("class", [])
 
-            if "tb_item" in css_classes:
-                # Total for import type (e.g. Vinhos de mesa)
-                data.append({
-                    "Type": current_type_label,
-                    "Country": country,
-                    "Quantity (kg)": quantity,
-                    "Value (US$)": value,
-                    "Year": year
-                })
-            elif "tb_subitem" in css_classes:
-                # Country-level rows
-                data.append({
-                    "Type": current_type_label,
-                    "Country": country,
-                    "Quantity (kg)": quantity,
-                    "Value (US$)": value,
-                    "Year": year
-                })
+            data.append({
+                "Type": current_type_label,
+                "Country": country,
+                "Quantity (kg)": quantity,
+                "Value (US$)": value,
+                "Year": year
+            })
 
-        # Adiciona linha total do <tfoot>, se existir
         total_row = table.select_one("tfoot tr")
         if total_row:
             tds = total_row.find_all("td")
