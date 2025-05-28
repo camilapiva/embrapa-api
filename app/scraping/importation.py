@@ -21,6 +21,7 @@ IMPORT_TYPES = {v: k.value for k, v in IMPORT_TYPE_TO_SUBOPT.items()}
 def fetch_importation_data(year: int, import_type: str) -> list[dict]:
     """Scrapes importation data for the given year and import type (sub-option)."""
     url = f"{settings.importation_url}&subopcao={import_type}&ano={year}"
+    current_type_label = IMPORT_TYPES.get(import_type, import_type)
 
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
@@ -32,10 +33,10 @@ def fetch_importation_data(year: int, import_type: str) -> list[dict]:
         if not table:
             raise ValueError("No table found on the page.")
 
-        data = parse_trade_table(table, year, import_type)
-        logger.info(f"{len(data)} importation records extracted for year {year} - type {import_type}")
+        data = parse_trade_table(table, year, current_type_label)
+        logger.info(f"{len(data)} importation records extracted for year {year} - type {current_type_label}")
         return data
 
     except Exception:
-        logger.warning(f"Failed to scrape importation data. Fallback enabled for importation year {year} - type {import_type}")
-        return load_importation_csv(year, import_type)
+        logger.warning(f"Failed to scrape importation data. Fallback enabled for importation year {year} - type {current_type_label}")
+        return load_importation_csv(year, current_type_label)

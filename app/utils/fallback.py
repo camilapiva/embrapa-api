@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from app.logging.logger import setup_logger
-from app.models.processing_types import GrapeTypeEnum
 
 logger = setup_logger(__name__)
 
