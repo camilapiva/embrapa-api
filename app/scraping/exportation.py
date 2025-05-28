@@ -1,18 +1,26 @@
 import httpx
 from bs4 import BeautifulSoup
-from typing import Literal
-
 from app.logging.logger import setup_logger
 from app.core.config import settings
 from app.scraping.helpers import parse_trade_table
 from app.utils.fallback import load_exportation_csv
+from app.models.exportation_types import ExportTypeEnum
 
 logger = setup_logger(__name__)
 
-ExportType = Literal["subopt_01", "subopt_02", "subopt_03", "subopt_04"]
+EXPORT_TYPE_TO_SUBOPT = {
+    ExportTypeEnum.vinhos_de_mesa: "subopt_01",
+    ExportTypeEnum.espumantes: "subopt_02",
+    ExportTypeEnum.uvas_frescas: "subopt_03",
+    ExportTypeEnum.uvas_passas: "subopt_04",
+}
 
-def fetch_exportation_data(year: int, export_type: ExportType) -> list[dict]:
+EXPORT_TYPES = {v: k.value for k, v in EXPORT_TYPE_TO_SUBOPT.items()}
+
+def fetch_exportation_data(year: int, export_type: str) -> list[dict]:
+    """Scrapes exportation data for the given year and import type (sub-option)."""
     url = f"{settings.exportation_url}&subopcao={export_type}&ano={year}"
+    current_type_label = EXPORT_TYPES.get(export_type, export_type)
 
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
@@ -24,10 +32,10 @@ def fetch_exportation_data(year: int, export_type: ExportType) -> list[dict]:
         if not table:
             raise ValueError("No table found on the page.")
 
-        data = parse_trade_table(table, year, export_type)
-        logger.info(f"{len(data)} exportation records extracted for year {year} - {export_type}")
+        data = parse_trade_table(table, year, current_type_label)
+        logger.info(f"{len(data)} exportation records extracted for year {year} - {current_type_label}")
         return data
 
     except Exception:
-        logger.warning(f"Failed to scrape exportation data. Fallback enabled for exportation year {year} - {export_type}")
-        return load_exportation_csv(year, export_type)
+        logger.warning(f"Failed to scrape exportation data. Fallback enabled for exportation year {year} - {current_type_label}")
+        return load_exportation_csv(year, current_type_label)

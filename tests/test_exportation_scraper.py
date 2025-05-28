@@ -1,14 +1,14 @@
 from app.scraping.exportation import fetch_exportation_data
+from app.models.exportation_types import ExportTypeEnum
 
 def test_exportation_scraping_valid_year_and_type():
     year = 2022
-    export_type = "subopt_01"
+    export_type = ExportTypeEnum.vinhos_de_mesa.value
     data = fetch_exportation_data(year, export_type)
 
     assert isinstance(data, list)
     assert len(data) > 0
 
-    # Check structure of the data
     sample = data[0]
     assert "Country" in sample
     assert "Quantity (kg)" in sample

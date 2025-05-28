@@ -3,20 +3,22 @@ import pandas as pd
 import time
 import os
 from bs4 import BeautifulSoup
+from app.core.config import settings
 from app.scraping.helpers import clean_quantity
 from app.logging.logger import setup_logger
+from app.models.exportation_types import ExportTypeEnum
 
 logger = setup_logger(__name__)
 
 EXPORT_TYPES = {
-    "subopt_01": "Vinhos de mesa",
-    "subopt_02": "Espumantes",
-    "subopt_03": "Uvas frescas",
-    "subopt_04": "Suco de uva"
+    "subopt_01": ExportTypeEnum.vinhos_de_mesa.value,
+    "subopt_02": ExportTypeEnum.espumantes.value,
+    "subopt_03": ExportTypeEnum.uvas_frescas.value,
+    "subopt_04": ExportTypeEnum.uvas_passas.value,
 }
 
 def fetch_year_export_data(year: int, export_type: str) -> pd.DataFrame:
-    url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_06&subopcao={export_type}&ano={year}"
+    url = f"{settings.exportation_url}&subopcao={export_type}&ano={year}"
     headers = {"User-Agent": "Mozilla/5.0"}
 
     try:
@@ -29,19 +31,24 @@ def fetch_year_export_data(year: int, export_type: str) -> pd.DataFrame:
             logger.warning(f"Table not found for year {year} - type {export_type}")
             return None
 
-        rows = table.select("tbody tr")
         data = []
+        current_type_label = EXPORT_TYPES.get(export_type, export_type)
 
-        for row in rows:
+        for row in table.select("tbody tr"):
             cols = row.find_all("td")
             if len(cols) != 3:
                 continue
 
+            td1, td2, td3 = cols
+            country = td1.get_text(strip=True)
+            quantity = clean_quantity(td2.get_text(strip=True))
+            value = clean_quantity(td3.get_text(strip=True))
+
             data.append({
-                "Type": export_type,
-                "Country": cols[0].get_text(strip=True),
-                "Quantity (kg)": clean_quantity(cols[1].get_text(strip=True)),
-                "Value (US$)": clean_quantity(cols[2].get_text(strip=True)),
+                "Type": current_type_label,
+                "Country": country,
+                "Quantity (kg)": quantity,
+                "Value (US$)": value,
                 "Year": year
             })
 
@@ -50,7 +57,7 @@ def fetch_year_export_data(year: int, export_type: str) -> pd.DataFrame:
             tds = total_row.find_all("td")
             if len(tds) == 3:
                 data.append({
-                    "Type": export_type,
+                    "Type": current_type_label,
                     "Country": "Total",
                     "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
                     "Value (US$)": clean_quantity(tds[2].get_text(strip=True)),
