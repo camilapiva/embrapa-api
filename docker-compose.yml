@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  fastapi:
+    build: .
+    container_name: embrapa-api
+    ports:
+      - "8011:8011"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
