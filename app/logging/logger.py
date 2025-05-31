@@ -26,7 +26,7 @@ def setup_logger(name: str) -> logging.Logger:
     # File handler with rotation
     log_dir = os.path.join(os.getcwd(), "logs")
     os.makedirs(log_dir, exist_ok=True)
-    file_handler = RotatingFileHandler(log_path, maxBytes=1_000_000, backupCount=3)
+    file_handler = RotatingFileHandler(log_path, maxBytes=9000000, backupCount=3, delay=True)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
