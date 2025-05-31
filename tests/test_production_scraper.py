@@ -1,4 +1,4 @@
-from app.scraping.production import fetch_production_data
+from app.services.production import fetch_production_data
 
 def test_scraping_returns_data_for_valid_year():
     year = 2022

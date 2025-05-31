@@ -1,4 +1,4 @@
-from app.scraping.helpers import clean_quantity, is_total_row, is_category_row, extract_data_rows
+from app.services.helpers import clean_quantity, is_total_row, is_category_row, extract_data_rows
 from bs4 import BeautifulSoup
 
 def test_clean_quantity_valid():

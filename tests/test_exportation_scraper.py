@@ -1,4 +1,4 @@
-from app.scraping.exportation import fetch_exportation_data
+from app.services.exportation import fetch_exportation_data
 from app.models.exportation_types import ExportTypeEnum
 
 def test_exportation_scraping_valid_year_and_type():

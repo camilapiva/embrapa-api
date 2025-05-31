@@ -1,4 +1,4 @@
-from app.utils.fallback import load_production_csv
+from app.repositories.fallback import load_production_csv
 
 def test_fallback_returns_data_for_valid_year():
     year = 2022

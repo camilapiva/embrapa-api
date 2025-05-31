@@ -1,4 +1,4 @@
-from app.utils.fallback import load_exportation_csv
+from app.repositories.fallback import load_exportation_csv
 from app.models.exportation_types import ExportTypeEnum
 
 def test_exportation_fallback_valid_year_and_type():

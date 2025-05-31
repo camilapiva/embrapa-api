@@ -1,4 +1,4 @@
-from app.scraping.importation import fetch_importation_data
+from app.services.importation import fetch_importation_data
 from app.models.importation_types import ImportTypeEnum
 
 def test_scraping_returns_data_for_valid_year_and_type():
