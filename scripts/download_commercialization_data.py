@@ -3,7 +3,7 @@ import pandas as pd
 import time
 import os
 from bs4 import BeautifulSoup
-from app.scraping.helpers import clean_quantity
+from app.services.helpers import clean_quantity
 from app.logging.logger import setup_logger
 
 logger = setup_logger(__name__)
