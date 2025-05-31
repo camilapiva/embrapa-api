@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, Depends, HTTPException
-from app.scraping.commercialization import fetch_commercialization_data
+from app.services.commercialization import fetch_commercialization_data
 from app.core.auth import get_current_user
 from app.logging.logger import setup_logger
 

@@ -2,8 +2,8 @@ import httpx
 from bs4 import BeautifulSoup
 from app.logging.logger import setup_logger
 from app.core.config import settings
-from app.scraping.helpers import parse_trade_table
-from app.utils.fallback import load_exportation_csv
+from app.services.helpers import parse_trade_table
+from app.repositories.fallback import load_exportation_csv
 from app.models.exportation_types import ExportTypeEnum
 
 logger = setup_logger(__name__)

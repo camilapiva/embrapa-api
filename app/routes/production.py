@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, HTTPException, Depends
-from app.scraping.production import fetch_production_data
+from app.services.production import fetch_production_data
 from app.core.auth import get_current_user
 from app.logging.logger import setup_logger
 

@@ -3,16 +3,18 @@ from bs4 import BeautifulSoup
 
 from app.core.config import settings
 from app.logging.logger import setup_logger
-from app.scraping.helpers import parse_category_table
-from app.utils.fallback import load_commercialization_csv
+from app.repositories.fallback import load_production_csv
+from app.services.helpers import parse_category_table
 
 logger = setup_logger(__name__)
 
-def fetch_commercialization_data(year: int) -> list[dict]:
-    url = f"{settings.commercialization_url}&ano={year}"
+def fetch_production_data(year: int) -> list[dict]:
+    url = f"{settings.production_url}&ano={year}"
 
     try:
-        headers = {"User-Agent": "Mozilla/5.0"}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        }
         response = httpx.get(url, timeout=10, headers=headers)
         response.raise_for_status()
 
@@ -20,7 +22,7 @@ def fetch_commercialization_data(year: int) -> list[dict]:
         table = soup.find("table", {"class": "tb_base tb_dados"})
 
         if not table:
-            raise ValueError("No data table found on the page.")
+            raise ValueError("No table with class 'tb_base tb_dados' found.")
 
         data = parse_category_table(
             table=table,
@@ -30,9 +32,9 @@ def fetch_commercialization_data(year: int) -> list[dict]:
             quantity_label="Quantity (L.)"
         )
 
-        logger.info(f"{len(data)} commercialization records extracted for year {year}")
+        logger.info(f"{len(data)} production records extracted for year {year}.")
         return data
 
     except Exception:
-        logger.warning(f"Failed to scrape commercialization data. Fallback enabled for commercialization year {year}")
-        return load_commercialization_csv(year)
+        logger.warning(f"Failed to scrape production data. Fallback enabled for production year {year}")
+        return load_production_csv(year)

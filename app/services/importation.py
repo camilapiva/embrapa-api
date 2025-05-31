@@ -1,7 +1,7 @@
 import httpx
 from bs4 import BeautifulSoup
-from app.scraping.helpers import parse_trade_table
-from app.utils.fallback import load_importation_csv
+from app.services.helpers import parse_trade_table
+from app.repositories.fallback import load_importation_csv
 from app.core.config import settings
 from app.logging.logger import setup_logger
 from app.models.importation_types import ImportTypeEnum
