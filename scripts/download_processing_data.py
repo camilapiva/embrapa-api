@@ -63,18 +63,6 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
                     "Year": year
                 })
 
-        total_row = table.select_one("tfoot tr")
-        if total_row:
-            tds = total_row.find_all("td")
-            if len(tds) == 2:
-                data.append({
-                    "GrapeType": GRAPE_TYPES.get(grape_type, grape_type),
-                    "Category": "Total",
-                    "Cultivar": tds[0].get_text(strip=True),
-                    "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
-                    "Year": year
-                })
-
         return pd.DataFrame(data)
 
     except Exception as e:

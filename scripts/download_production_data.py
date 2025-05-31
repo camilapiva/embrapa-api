@@ -50,17 +50,6 @@ def fetch_production_data(year: int) -> pd.DataFrame:
                     "Year": year
                 })
 
-        total_row = table.select_one("tfoot tr")
-        if total_row:
-            tds = total_row.find_all("td")
-            if len(tds) == 2:
-                data.append({
-                    "Category": "Total",
-                    "Product": tds[0].get_text(strip=True),
-                    "Quantity (L.)": clean_quantity(tds[1].get_text(strip=True)),
-                    "Year": year
-                })
-
         return pd.DataFrame(data)
 
     except Exception as e:

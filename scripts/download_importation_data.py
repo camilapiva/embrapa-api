@@ -53,18 +53,6 @@ def fetch_year_import_data(year: int, import_type: str) -> pd.DataFrame:
                 "Year": year
             })
 
-        total_row = table.select_one("tfoot tr")
-        if total_row:
-            tds = total_row.find_all("td")
-            if len(tds) == 3:
-                data.append({
-                    "Type": current_type_label,
-                    "Country": "Total",
-                    "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
-                    "Value (US$)": clean_quantity(tds[2].get_text(strip=True)),
-                    "Year": year
-                })
-
         return pd.DataFrame(data)
 
     except Exception as e:
