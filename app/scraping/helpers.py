@@ -91,17 +91,6 @@ def parse_category_table(table: Tag, year: int, category_label: str, subcategory
                 "Year": year
             })
 
-    total_row = table.select_one("tfoot tr")
-    if total_row:
-        tds = total_row.find_all("td")
-        if len(tds) == 2:
-            data.append({
-                category_label: "Total",
-                subcategory_label: tds[0].get_text(strip=True),
-                quantity_label: clean_quantity(tds[1].get_text(strip=True)),
-                "Year": year
-            })
-
     logger.debug(f"{len(data)} rows extracted from category table for year {year}")
     return data
 
@@ -121,18 +110,6 @@ def parse_trade_table(table: Tag, year: int, trade_type: str) -> list[dict]:
             "Value (US$)": clean_quantity(cols[2].get_text(strip=True)),
             "Year": year
         })
-
-    total_row = table.select_one("tfoot tr")
-    if total_row:
-        tds = total_row.find_all("td")
-        if len(tds) == 3:
-            data.append({
-                "Type": trade_type,
-                "Country": "Total",
-                "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
-                "Value (US$)": clean_quantity(tds[2].get_text(strip=True)),
-                "Year": year
-            })
 
     logger.debug(f"{len(data)} rows extracted from trade table for year {year} - {trade_type}")
     return data
