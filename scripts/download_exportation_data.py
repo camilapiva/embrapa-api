@@ -52,6 +52,7 @@ def fetch_year_export_data(year: int, export_type: str) -> pd.DataFrame:
                 "Year": year
             })
 
+
         return pd.DataFrame(data)
 
     except Exception as e:
