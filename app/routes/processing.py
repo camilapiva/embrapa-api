@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, HTTPException, Depends
 from app.models.processing_types import GrapeTypeEnum
-from app.core.auth import get_current_user
+from app.auth.dependencies import get_current_user
 from app.services.processing import fetch_processing_data, GRAPE_TYPE_TO_SUBOPT
 from app.logging.logger import setup_logger
 

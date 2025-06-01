@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     base_url: str
 
     # JWT configuration
-    jwt_secret: str
+    secret_key: str
     jwt_algorithm: str
     access_token_expire_minutes: int
 

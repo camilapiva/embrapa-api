@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, Depends, HTTPException
 from app.services.importation import fetch_importation_data, IMPORT_TYPE_TO_SUBOPT
-from app.core.auth import get_current_user
+from app.auth.dependencies import get_current_user
 from app.logging.logger import setup_logger
 from app.models.importation_types import ImportTypeEnum
 

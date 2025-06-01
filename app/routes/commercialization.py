@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, Depends, HTTPException
 from app.services.commercialization import fetch_commercialization_data
-from app.core.auth import get_current_user
+from app.auth.dependencies import get_current_user
 from app.logging.logger import setup_logger
 
 logger = setup_logger(__name__)

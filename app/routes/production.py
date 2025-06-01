@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, HTTPException, Depends
 from app.services.production import fetch_production_data
-from app.core.auth import get_current_user
+from app.auth.dependencies import get_current_user
 from app.logging.logger import setup_logger
 
 logger = setup_logger(__name__)
