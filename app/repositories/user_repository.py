@@ -1,17 +1,14 @@
-from typing import Optional
-from app.auth.schemas import UserInDB
+from sqlalchemy.orm import Session
+from app.models.user import User
 from app.auth.security import hash_password
 
-# Fake users
-fake_users_db: dict[str, UserInDB] = {
-    "admin": UserInDB(username="admin", hashed_password=hash_password("admin"))
-}
+def get_user_by_username(db: Session, username: str) -> User | None:
+    return db.query(User).filter(User.username == username).first()
 
-def get_user(username: str) -> Optional[UserInDB]:
-    return fake_users_db.get(username)
-
-def create_user(username: str, password: str) -> UserInDB:
+def create_user(db: Session, username: str, password: str) -> User:
     hashed = hash_password(password)
-    user = UserInDB(username=username, hashed_password=hashed)
-    fake_users_db[username] = user
+    user = User(username=username, hashed_password=hashed)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
     return user
