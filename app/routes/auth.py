@@ -1,27 +1,35 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from datetime import timedelta
-
-from app.auth.schemas import UserCreate, UserLogin
+from sqlalchemy.orm import Session
+from app.core.database import SessionLocal
+from app.schemas.user import UserCreate, UserOut
 from app.auth.security import verify_password, create_access_token
-from app.repositories.user_repository import get_user, create_user
+from app.repositories.user_repository import get_user_by_username, create_user
 
 router = APIRouter()
 
-@router.post("/register")
-def register(user: UserCreate):
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@router.post("/register", response_model=UserOut)
+def register(user: UserCreate, db: Session = Depends(get_db)):
     """
-    This route uses JSON payload to register a new user.
-    Different from /login which follows OAuth2 standard using form-data.
+    Register a new user via JSON body.
     """
-    if get_user(user.username):
+    if get_user_by_username(db, user.username):
         raise HTTPException(status_code=400, detail="Username already exists")
-    create_user(user.username, user.password)
-    return {"message": "User registered successfully"}
+    return create_user(db, user.username, user.password)
 
 @router.post("/login")
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = get_user(form_data.username)
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """
+    Login using OAuth2PasswordRequestForm (form-data).
+    """
+    user = get_user_by_username(db, form_data.username)
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
