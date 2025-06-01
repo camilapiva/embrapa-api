@@ -20,7 +20,15 @@ beautifulsoup4 = "^4.13.4"
 pandas = "^2.2.3"
 python-dotenv = "^1.1.0"
 python-jose = "^3.3.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+bcrypt = "<4.1.0" 
+httpx = "^0.28.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+markers = [
+    "describe: marks a test group with a human-readable description"
+]
