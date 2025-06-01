@@ -1,7 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
-from app.repositories.user_repository import create_user, get_user, fake_users_db
+from app.repositories.user_repository import create_user, get_user_by_username
+from app.core.database import SessionLocal
 
 TEST_USERNAME = "testuser"
 TEST_PASSWORD = "testpass"
@@ -14,14 +15,24 @@ def client():
     return TestClient(app)
 
 @pytest.fixture(scope="module")
-def test_user(client):
+def db():
+    """
+    Yields a SQLAlchemy DB session for tests.
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@pytest.fixture(scope="module")
+def test_user(db):
     """
     Ensures that the test user exists in the system prior to testing.
     """
-    if TEST_USERNAME in fake_users_db:
-      del fake_users_db[TEST_USERNAME]
-
-    create_user(TEST_USERNAME, TEST_PASSWORD)
+    existing = get_user_by_username(db, TEST_USERNAME)
+    if not existing:
+        create_user(db, TEST_USERNAME, TEST_PASSWORD)
     return {"username": TEST_USERNAME, "password": TEST_PASSWORD}
 
 @pytest.fixture(scope="module")
