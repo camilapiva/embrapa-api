@@ -10,6 +10,10 @@ router = APIRouter()
 
 @router.post("/register")
 def register(user: UserCreate):
+    """
+    This route uses JSON payload to register a new user.
+    Different from /login which follows OAuth2 standard using form-data.
+    """
     if get_user(user.username):
         raise HTTPException(status_code=400, detail="Username already exists")
     create_user(user.username, user.password)
