@@ -1,8 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
-from app.repositories.user_repository import create_user, get_user
-from app.auth.security import verify_password
+from app.repositories.user_repository import create_user, get_user, fake_users_db
 
 TEST_USERNAME = "testuser"
 TEST_PASSWORD = "testpass"
@@ -19,8 +18,10 @@ def test_user(client):
     """
     Ensures that the test user exists in the system prior to testing.
     """
-    if not get_user(TEST_USERNAME):
-        create_user(TEST_USERNAME, TEST_PASSWORD)
+    if TEST_USERNAME in fake_users_db:
+      del fake_users_db[TEST_USERNAME]
+
+    create_user(TEST_USERNAME, TEST_PASSWORD)
     return {"username": TEST_USERNAME, "password": TEST_PASSWORD}
 
 @pytest.fixture(scope="module")
