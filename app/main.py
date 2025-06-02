@@ -10,6 +10,7 @@ from app.routes.processing import router as processing_router
 from app.routes.exportation import router as exportation_router
 from app.routes.importation import router as importation_router
 from app.routes.commercialization import router as commercialization_router
+from app.routes.predict import router as predict_router
 
 logger = setup_logger(__name__)
 
@@ -33,6 +34,7 @@ app.include_router(processing_router)
 app.include_router(exportation_router)
 app.include_router(importation_router)
 app.include_router(commercialization_router)
+app.include_router(predict_router)
 
 @app.get("/")
 def read_root():
