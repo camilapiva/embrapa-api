@@ -1,5 +1,6 @@
 from app.services.commercialization import fetch_commercialization_data
 
+
 def test_scraping_returns_data_for_valid_year():
     year = 2022
     data = fetch_commercialization_data(year)

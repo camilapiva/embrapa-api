@@ -7,10 +7,11 @@ from app.models.importation_types import ImportTypeEnum
 logger = setup_logger(__name__)
 router = APIRouter(prefix="/importation", tags=["Importation"])
 
+
 @router.get("/", dependencies=[Depends(get_current_user)])
 def get_importation_data(
     year: int = Query(..., ge=1970, le=2023),
-    import_type: ImportTypeEnum = Query(..., alias="type")
+    import_type: ImportTypeEnum = Query(..., alias="type"),
 ):
     """
     Returns the importation data for the specified year and grape type.
@@ -24,6 +25,11 @@ def get_importation_data(
     data = fetch_importation_data(year, subopt_code)
 
     if not data:
-        logger.warning(f"No importation data found for year {year} and type {import_type}")
-        raise HTTPException(status_code=503, detail="Unable to fetch importation data from Embrapa or fallback.")
+        logger.warning(
+            f"No importation data found for year {year} and type {import_type}"
+        )
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to fetch importation data from Embrapa or fallback.",
+        )
     return data

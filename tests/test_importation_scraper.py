@@ -2,6 +2,7 @@ from app.services.exportation import EXPORT_TYPE_TO_SUBOPT
 from app.services.importation import fetch_importation_data
 from app.models.importation_types import ImportTypeEnum
 
+
 def test_scraping_returns_data_for_valid_year_and_type():
     year = 2022
     import_type = ImportTypeEnum.vinhos_de_mesa.value

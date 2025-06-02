@@ -1,6 +1,7 @@
 from app.repositories.fallback import load_processing_csv
 from app.models.processing_types import GrapeTypeEnum
 
+
 def test_fallback_returns_data_for_valid_year_and_type():
     year = 2022
     grape_type = GrapeTypeEnum.viniferas.value

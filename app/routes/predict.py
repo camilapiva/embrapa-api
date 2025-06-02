@@ -5,6 +5,7 @@ from app.auth.dependencies import get_current_user
 
 router = APIRouter(prefix="/predict", tags=["Prediction"])
 
+
 @router.post("/", dependencies=[Depends(get_current_user)])
 def predict(input_data: PredictionInput):
     """

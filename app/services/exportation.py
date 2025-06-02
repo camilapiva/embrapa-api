@@ -17,6 +17,7 @@ EXPORT_TYPE_TO_SUBOPT = {
 
 EXPORT_TYPES = {v: k.value for k, v in EXPORT_TYPE_TO_SUBOPT.items()}
 
+
 def fetch_exportation_data(year: int, export_type: str) -> list[dict]:
     """Scrapes exportation data for the given year and import type (sub-option)."""
     url = f"{settings.exportation_url}&subopcao={export_type}&ano={year}"
@@ -33,9 +34,13 @@ def fetch_exportation_data(year: int, export_type: str) -> list[dict]:
             raise ValueError("No table found on the page.")
 
         data = parse_trade_table(table, year, current_type_label)
-        logger.info(f"{len(data)} exportation records extracted for year {year} - {current_type_label}")
+        logger.info(
+            f"{len(data)} exportation records extracted for year {year} - {current_type_label}"
+        )
         return data
 
     except Exception:
-        logger.warning(f"Failed to scrape exportation data. Fallback enabled for exportation year {year} - {current_type_label}")
+        logger.warning(
+            f"Failed to scrape exportation data. Fallback enabled for exportation year {year} - {current_type_label}"
+        )
         return load_exportation_csv(year, current_type_label)

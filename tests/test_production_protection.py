@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
+
 @pytest.mark.describe("Production route protection")
 class TestProductionAuth:
 

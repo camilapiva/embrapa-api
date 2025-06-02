@@ -11,14 +11,18 @@ def test_production_route_fallback_failure(monkeypatch, access_token):
     Forces coverage over `if not data` condition.
     """
     from app.routes import production
+
     monkeypatch.setattr(production, "fetch_production_data", lambda year: [])
 
-    response = client.get("/production/?year=2022", headers={
-        "Authorization": f"Bearer {access_token}"
-    })
+    response = client.get(
+        "/production/?year=2022", headers={"Authorization": f"Bearer {access_token}"}
+    )
 
     assert response.status_code == 503
-    assert response.json()["detail"] == "Unable to fetch production data from Embrapa or fallback."
+    assert (
+        response.json()["detail"]
+        == "Unable to fetch production data from Embrapa or fallback."
+    )
 
 
 def test_production_route_without_token():

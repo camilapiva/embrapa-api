@@ -8,6 +8,7 @@ from app.repositories.user_repository import get_user_by_username
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -15,9 +16,9 @@ def get_db():
     finally:
         db.close()
 
+
 def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -26,7 +27,9 @@ def get_current_user(
     )
 
     try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.jwt_algorithm])
+        payload = jwt.decode(
+            token, settings.secret_key, algorithms=[settings.jwt_algorithm]
+        )
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception

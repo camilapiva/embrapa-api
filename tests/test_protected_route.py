@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
+
 @pytest.mark.describe("Protected profile route")
 class TestProtectedProfile:
 

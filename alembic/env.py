@@ -5,6 +5,9 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 from dotenv import load_dotenv
 
+from app.models.base import Base
+from app.models import user
+
 # Load variables from .env (including DATABASE_URL)
 load_dotenv()
 
@@ -18,12 +21,9 @@ config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL"))
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Import your project metadata so Alembic can recognize the models
-from app.models.base import Base
-from app.models import user  # importa modelos para incluir nas migrações
-
 # Set the metadata for autogenerate to work correctly
 target_metadata = Base.metadata
+
 
 def run_migrations_offline() -> None:
     """Executa migrações no modo offline (gera SQL sem executar)."""

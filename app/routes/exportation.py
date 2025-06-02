@@ -5,12 +5,13 @@ from app.logging.logger import setup_logger
 from app.models.exportation_types import ExportTypeEnum
 
 logger = setup_logger(__name__)
-router = APIRouter(prefix="/exportation", tags=["Exportation"]) 
+router = APIRouter(prefix="/exportation", tags=["Exportation"])
+
 
 @router.get("/", dependencies=[Depends(get_current_user)])
 def get_exportation_data(
     year: int = Query(..., ge=1970, le=2023),
-    export_type: ExportTypeEnum = Query(..., alias="type")
+    export_type: ExportTypeEnum = Query(..., alias="type"),
 ):
     """
     Returns the exportation data for the specified year and grape type.
@@ -24,6 +25,11 @@ def get_exportation_data(
     data = fetch_exportation_data(year, subopt_code)
 
     if not data:
-        logger.warning(f"No exportation data found for year {year} and type {export_type}")
-        raise HTTPException(status_code=503, detail="Unable to fetch exportation data from Embrapa or fallback.")
+        logger.warning(
+            f"No exportation data found for year {year} and type {export_type}"
+        )
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to fetch exportation data from Embrapa or fallback.",
+        )
     return data

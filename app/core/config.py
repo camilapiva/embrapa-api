@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
     # General configuration
     project_name: str
@@ -37,5 +38,6 @@ class Settings(BaseSettings):
     @property
     def exportation_url(self) -> str:
         return f"{self.base_url}?opcao=opt_06"
+
 
 settings = Settings()

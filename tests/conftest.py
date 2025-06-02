@@ -7,12 +7,14 @@ from app.core.database import SessionLocal
 TEST_USERNAME = "testuser"
 TEST_PASSWORD = "testpass"
 
+
 @pytest.fixture(scope="module")
 def client():
     """
     Fixture that returns a TestClient of the application.
     """
     return TestClient(app)
+
 
 @pytest.fixture(scope="module")
 def db():
@@ -25,6 +27,7 @@ def db():
     finally:
         db.close()
 
+
 @pytest.fixture(scope="module")
 def test_user(db):
     """
@@ -35,6 +38,7 @@ def test_user(db):
         create_user(db, TEST_USERNAME, TEST_PASSWORD)
     return {"username": TEST_USERNAME, "password": TEST_PASSWORD}
 
+
 @pytest.fixture(scope="module")
 def access_token(client, test_user):
     """
@@ -42,14 +46,12 @@ def access_token(client, test_user):
     """
     response = client.post(
         "/auth/login",
-        data={
-            "username": test_user["username"],
-            "password": test_user["password"]
-        },
-        headers={"Content-Type": "application/x-www-form-urlencoded"}
+        data={"username": test_user["username"], "password": test_user["password"]},
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
     assert response.status_code == 200, "Login failed in fixture setup"
     return response.json()["access_token"]
+
 
 @pytest.fixture(scope="module")
 def authorized_client(client, access_token):

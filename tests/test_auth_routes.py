@@ -11,15 +11,19 @@ client = TestClient(app)
 
 
 @pytest.mark.usefixtures("test_user")
-@pytest.mark.parametrize("username,password,status", [
-    (TEST_USERNAME, TEST_PASSWORD, 200),
-    (TEST_USERNAME, "wrongpass", 401),
-])
+@pytest.mark.parametrize(
+    "username,password,status",
+    [
+        (TEST_USERNAME, TEST_PASSWORD, 200),
+        (TEST_USERNAME, "wrongpass", 401),
+    ],
+)
 def test_login_endpoint(username, password, status):
-    response = client.post("/auth/login", data={
-        "username": username,
-        "password": password
-    }, headers={"Content-Type": "application/x-www-form-urlencoded"})
+    response = client.post(
+        "/auth/login",
+        data={"username": username, "password": password},
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
 
     assert response.status_code == status
     if status == 200:

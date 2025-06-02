@@ -1,5 +1,6 @@
 from app.services.processing import fetch_processing_data
 
+
 def test_scraping_returns_data_for_valid_year_and_type():
     year = 2022
     grape_type = "subopt_01"

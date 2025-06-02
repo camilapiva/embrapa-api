@@ -1,11 +1,12 @@
 from app.repositories.fallback import load_importation_csv
 from app.models.importation_types import ImportTypeEnum
 
+
 def test_fallback_returns_data_for_valid_year_and_type():
     year = 2022
     import_type = ImportTypeEnum.vinhos_de_mesa.value
     data = load_importation_csv(year, import_type)
-    
+
     assert isinstance(data, list)
     assert len(data) > 0
 

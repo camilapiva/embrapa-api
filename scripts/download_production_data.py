@@ -8,6 +8,7 @@ from app.logging.logger import setup_logger
 
 logger = setup_logger(__name__)
 
+
 def fetch_production_data(year: int) -> pd.DataFrame:
     url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_02&ano={year}"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -36,25 +37,30 @@ def fetch_production_data(year: int) -> pd.DataFrame:
 
             if "tb_item" in td1.get("class", []):
                 current_category = label
-                data.append({
-                    "Category": current_category,
-                    "Product": "Total",
-                    "Quantity (L.)": clean_quantity(quantity_raw),
-                    "Year": year
-                })
+                data.append(
+                    {
+                        "Category": current_category,
+                        "Product": "Total",
+                        "Quantity (L.)": clean_quantity(quantity_raw),
+                        "Year": year,
+                    }
+                )
             elif "tb_subitem" in td1.get("class", []):
-                data.append({
-                    "Category": current_category,
-                    "Product": label,
-                    "Quantity (L.)": clean_quantity(quantity_raw),
-                    "Year": year
-                })
+                data.append(
+                    {
+                        "Category": current_category,
+                        "Product": label,
+                        "Quantity (L.)": clean_quantity(quantity_raw),
+                        "Year": year,
+                    }
+                )
 
         return pd.DataFrame(data)
 
     except Exception as e:
         logger.error(f"Error processing production for year {year}: {e}")
         return None
+
 
 def main():
     os.makedirs("data", exist_ok=True)
@@ -73,6 +79,7 @@ def main():
         logger.info("Data saved to data/production.csv")
     else:
         logger.warning("No production data was collected.")
+
 
 if __name__ == "__main__":
     main()

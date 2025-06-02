@@ -17,6 +17,7 @@ EXPORT_TYPES = {
     "subopt_04": ExportTypeEnum.uvas_passas.value,
 }
 
+
 def fetch_year_export_data(year: int, export_type: str) -> pd.DataFrame:
     url = f"{settings.exportation_url}&subopcao={export_type}&ano={year}"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -44,20 +45,24 @@ def fetch_year_export_data(year: int, export_type: str) -> pd.DataFrame:
             quantity = clean_quantity(td2.get_text(strip=True))
             value = clean_quantity(td3.get_text(strip=True))
 
-            data.append({
-                "Type": current_type_label,
-                "Country": country,
-                "Quantity (kg)": quantity,
-                "Value (US$)": value,
-                "Year": year
-            })
-
+            data.append(
+                {
+                    "Type": current_type_label,
+                    "Country": country,
+                    "Quantity (kg)": quantity,
+                    "Value (US$)": value,
+                    "Year": year,
+                }
+            )
 
         return pd.DataFrame(data)
 
     except Exception as e:
-        logger.error(f"Error processing exportation for year {year} - type {export_type}: {e}")
+        logger.error(
+            f"Error processing exportation for year {year} - type {export_type}: {e}"
+        )
         return None
+
 
 def main():
     os.makedirs("data", exist_ok=True)
@@ -65,7 +70,9 @@ def main():
 
     for year in range(1970, 2024):
         for export_type in EXPORT_TYPES:
-            logger.info(f"Collecting exportation data for year {year} - type {export_type}...")
+            logger.info(
+                f"Collecting exportation data for year {year} - type {export_type}..."
+            )
             df = fetch_year_export_data(year, export_type)
             if df is not None:
                 all_data.append(df)
@@ -77,6 +84,7 @@ def main():
         logger.info("File saved to data/exportation.csv")
     else:
         logger.warning("No exportation data was collected.")
+
 
 if __name__ == "__main__":
     main()

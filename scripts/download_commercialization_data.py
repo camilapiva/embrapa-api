@@ -8,6 +8,7 @@ from app.logging.logger import setup_logger
 
 logger = setup_logger(__name__)
 
+
 def fetch_commercialization_data(year: int) -> pd.DataFrame:
     url = f"http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_04&ano={year}"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -37,25 +38,30 @@ def fetch_commercialization_data(year: int) -> pd.DataFrame:
             if "tb_item" in td1.get("class", []):
                 current_category = label
                 if quantity_raw:
-                    data.append({
-                        "Category": current_category,
-                        "Product": "Total",
-                        "Quantity (L.)": clean_quantity(quantity_raw),
-                        "Year": year
-                    })
+                    data.append(
+                        {
+                            "Category": current_category,
+                            "Product": "Total",
+                            "Quantity (L.)": clean_quantity(quantity_raw),
+                            "Year": year,
+                        }
+                    )
             elif "tb_subitem" in td1.get("class", []):
-                data.append({
-                    "Category": current_category,
-                    "Product": label,
-                    "Quantity (L.)": clean_quantity(quantity_raw),
-                    "Year": year
-                })
+                data.append(
+                    {
+                        "Category": current_category,
+                        "Product": label,
+                        "Quantity (L.)": clean_quantity(quantity_raw),
+                        "Year": year,
+                    }
+                )
 
         return pd.DataFrame(data)
 
     except Exception as e:
         logger.error(f"Error processing commercialization for year {year}: {e}")
         return None
+
 
 def main():
     os.makedirs("data", exist_ok=True)
@@ -74,6 +80,7 @@ def main():
         logger.info("File saved to data/commercialization.csv")
     else:
         logger.warning("No commercialization data was collected.")
+
 
 if __name__ == "__main__":
     main()

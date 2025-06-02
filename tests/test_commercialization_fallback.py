@@ -1,5 +1,6 @@
 from app.repositories.fallback import load_commercialization_csv
 
+
 def test_fallback_returns_data_for_valid_year():
     year = 2022
     data = load_commercialization_csv(year)

@@ -7,10 +7,11 @@ from app.logging.logger import setup_logger
 logger = setup_logger(__name__)
 router = APIRouter(prefix="/processing", tags=["Processing"])
 
+
 @router.get("/", dependencies=[Depends(get_current_user)])
 def get_processing_data(
     year: int = Query(..., ge=1970, le=2023),
-    grape_type: GrapeTypeEnum = Query(..., alias="type")
+    grape_type: GrapeTypeEnum = Query(..., alias="type"),
 ):
     """
     Returns the processing data for the specified year and grape type.
@@ -23,6 +24,11 @@ def get_processing_data(
 
     data = fetch_processing_data(year, subopt_code)
     if not data:
-        logger.warning(f"No processing data found for year {year} and type {grape_type}")
-        raise HTTPException(status_code=503, detail="Unable to fetch processing data from Embrapa or fallback.")
+        logger.warning(
+            f"No processing data found for year {year} and type {grape_type}"
+        )
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to fetch processing data from Embrapa or fallback.",
+        )
     return data

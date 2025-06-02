@@ -1,5 +1,6 @@
 from app.services.production import fetch_production_data
 
+
 def test_scraping_returns_data_for_valid_year():
     year = 2022
     data = fetch_production_data(year)
@@ -12,7 +13,8 @@ def test_scraping_returns_data_for_valid_year():
 
     # Validates if the expected data exists
     valid = [
-        item for item in data
+        item
+        for item in data
         if isinstance(item, dict)
         and "Product" in item
         and "Quantity (L.)" in item

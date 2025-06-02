@@ -19,14 +19,13 @@ GRAPE_TYPE_TO_SUBOPT = {
 
 GRAPE_TYPES = {v: k.value for k, v in GRAPE_TYPE_TO_SUBOPT.items()}
 
+
 def fetch_processing_data(year: int, grape_type: str) -> list[dict]:
     """Scrapes processing data for the given year and grape type (sub-option)."""
     url = f"{settings.processing_url}&subopcao={grape_type}&ano={year}"
 
     try:
-        headers = {
-            "User-Agent": "Mozilla/5.0"
-        }
+        headers = {"User-Agent": "Mozilla/5.0"}
         response = httpx.get(url, timeout=10, headers=headers)
         response.raise_for_status()
 
@@ -41,15 +40,19 @@ def fetch_processing_data(year: int, grape_type: str) -> list[dict]:
             year=year,
             category_label="Category",
             subcategory_label="Cultivar",
-            quantity_label="Quantity (kg)"
+            quantity_label="Quantity (kg)",
         )
 
         for item in data:
             item["GrapeType"] = GRAPE_TYPES.get(grape_type, grape_type)
-        
-        logger.info(f"{len(data)} processing records extracted for year {year} - type {grape_type}.")
+
+        logger.info(
+            f"{len(data)} processing records extracted for year {year} - type {grape_type}."
+        )
         return data
 
     except Exception:
-        logger.warning(f"Failed to scrape processing data. Fallback enabled for processing year {year} - type {grape_type}.")
+        logger.warning(
+            f"Failed to scrape processing data. Fallback enabled for processing year {year} - type {grape_type}."
+        )
         return load_processing_csv(year, grape_type)

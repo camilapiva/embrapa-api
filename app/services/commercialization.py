@@ -8,6 +8,7 @@ from app.repositories.fallback import load_commercialization_csv
 
 logger = setup_logger(__name__)
 
+
 def fetch_commercialization_data(year: int) -> list[dict]:
     url = f"{settings.commercialization_url}&ano={year}"
 
@@ -27,12 +28,14 @@ def fetch_commercialization_data(year: int) -> list[dict]:
             year=year,
             category_label="Category",
             subcategory_label="Product",
-            quantity_label="Quantity (L.)"
+            quantity_label="Quantity (L.)",
         )
 
         logger.info(f"{len(data)} commercialization records extracted for year {year}")
         return data
 
     except Exception:
-        logger.warning(f"Failed to scrape commercialization data. Fallback enabled for commercialization year {year}")
+        logger.warning(
+            f"Failed to scrape commercialization data. Fallback enabled for commercialization year {year}"
+        )
         return load_commercialization_csv(year)

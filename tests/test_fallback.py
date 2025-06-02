@@ -2,6 +2,7 @@ import pytest
 from app.repositories.fallback import load_production_csv
 from app.repositories import fallback
 
+
 def test_fallback_returns_data_for_valid_year():
     year = 2022
     data = load_production_csv(year)
@@ -20,7 +21,10 @@ def test_fallback_returns_data_for_valid_year():
     assert "Year" in sample
 
     # Check if total row exists
-    assert any(item.get("Product") == "Total" for item in filtered), "'Total' row not found for the year"
+    assert any(
+        item.get("Product") == "Total" for item in filtered
+    ), "'Total' row not found for the year"
+
 
 def raise_read_error(*args, **kwargs):
     raise IOError("Simulated read error")

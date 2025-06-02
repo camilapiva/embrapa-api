@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class GrapeTypeEnum(str, Enum):
     viniferas = "Viníferas"
     americanas_hibridas = "Americanas e híbridas"

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class ExportTypeEnum(str, Enum):
     vinhos_de_mesa = "Vinhos de mesa"
     espumantes = "Espumantes"
