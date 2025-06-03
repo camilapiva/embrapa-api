@@ -8,7 +8,7 @@ services:
     autoDeploy: true
     envVars:
       # Project
-      - key: EmbrapaAPI
+      - key: PROJECT_NAME
         sync: false
       - key: ENVIRONMENT
         sync: false
