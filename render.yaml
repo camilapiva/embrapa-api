@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: embrapa-api
+    env: docker
+    repo: https://github.com/camilapiva/embrapa-api
+    branch: dev
+    plan: free
+    autoDeploy: true
+    envVars:
+      # Project
+      - key: PROJECT_NAME
+        sync: false
+      - key: ENVIRONMENT
+        sync: false
+      - key: DEBUG
+        sync: false
+
+      # Embrapa
+      - key: BASE_URL
+        sync: false
+
+      # JWT
+      - key: SECRET_KEY
+        sync: false
+      - key: JWT_ALGORITHM
+        sync: false
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        sync: false
+
+      # Database
+      - key: DATABASE_URL
+        sync: false
