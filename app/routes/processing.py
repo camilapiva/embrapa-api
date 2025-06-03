@@ -1,18 +1,19 @@
 from fastapi import APIRouter, Query, HTTPException, Depends
 from app.models.processing_types import GrapeTypeEnum
 from app.auth.dependencies import get_current_user
-from app.services.processing import fetch_processing_data, GRAPE_TYPE_TO_SUBOPT
+from app.schemas.schema import ProcessingResponse
+from app.services.extractions.processing import fetch_processing_data, GRAPE_TYPE_TO_SUBOPT
 from app.logging.logger import setup_logger
 
 logger = setup_logger(__name__)
 router = APIRouter(prefix="/processing", tags=["Processing"])
 
 
-@router.get("/", dependencies=[Depends(get_current_user)])
+@router.get("/", dependencies=[Depends(get_current_user)], response_model=ProcessingResponse)
 def get_processing_data(
     year: int = Query(..., ge=1970, le=2023),
     grape_type: GrapeTypeEnum = Query(..., alias="type"),
-):
+) -> ProcessingResponse:
     """
     Returns the processing data for the specified year and grape type.
     Example: /processing/?year=2022&type=Viníferas

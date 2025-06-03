@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Query, Depends, HTTPException
-from app.services.importation import fetch_importation_data, IMPORT_TYPE_TO_SUBOPT
+from app.schemas.schema import ImportationResponse
+from app.services.extractions.importation import fetch_importation_data, IMPORT_TYPE_TO_SUBOPT
 from app.auth.dependencies import get_current_user
 from app.logging.logger import setup_logger
 from app.models.importation_types import ImportTypeEnum
@@ -8,11 +9,11 @@ logger = setup_logger(__name__)
 router = APIRouter(prefix="/importation", tags=["Importation"])
 
 
-@router.get("/", dependencies=[Depends(get_current_user)])
+@router.get("/", dependencies=[Depends(get_current_user)], response_model=ImportationResponse)
 def get_importation_data(
     year: int = Query(..., ge=1970, le=2023),
     import_type: ImportTypeEnum = Query(..., alias="type"),
-):
+) -> ImportationResponse:
     """
     Returns the importation data for the specified year and grape type.
     Example: /importation/?year=2022&type=subopt_01

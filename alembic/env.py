@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from app.models.base import Base
 from app.models import user
+from app.models.models import Commercialization, Processing, Production, Importation, Exportation
 
 # Load variables from .env (including DATABASE_URL)
 load_dotenv()
