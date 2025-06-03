@@ -3,7 +3,7 @@ services:
     name: embrapa-api
     env: docker
     repo: https://github.com/camilapiva/embrapa-api
-    branch: dev
+    branch: main
     plan: free
     autoDeploy: true
     envVars:
