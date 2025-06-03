@@ -1,4 +1,4 @@
-from app.services.extractions.processing import ProcessingExtractor
+from app.services.extractions.processing import fetch_processing_data
 from sqlalchemy import delete
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -9,8 +9,7 @@ from app.models.processing import Processing
 async def populate_processings(year: int):
 
     async with AsyncSessionLocal() as session:
-        extractor = ProcessingExtractor()
-        response = extractor.fetch_data(year)
+        response = fetch_processing_data(year)
         data = response.processings
         try:
             await session.execute(delete(Processing).where(Processing.year == year))

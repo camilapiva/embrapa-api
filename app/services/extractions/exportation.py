@@ -22,42 +22,41 @@ EXPORT_TYPES = {v: k.value for k, v in EXPORT_TYPE_TO_SUBOPT.items()}
 
 
 
-class ExportationExtractor(BaseExtractor):
-    def fetch_data(year: int, export_type: str) -> list[dict]:
-        """Scrapes exportation data for the given year and import type (sub-option)."""
-        url = f"{settings.exportation_url}&subopcao={export_type}&ano={year}"
-        current_type_label = EXPORT_TYPES.get(export_type, export_type)
-        exportations = []
+def fetch_exportation_data(year: int, export_type: str) -> list[dict]:
+    """Scrapes exportation data for the given year and import type (sub-option)."""
+    url = f"{settings.exportation_url}&subopcao={export_type}&ano={year}"
+    current_type_label = EXPORT_TYPES.get(export_type, export_type)
+    exportations = []
 
-        try:
-            headers = {"User-Agent": "Mozilla/5.0"}
-            response = httpx.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
+    try:
+        headers = {"User-Agent": "Mozilla/5.0"}
+        response = httpx.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
 
-            soup = BeautifulSoup(response.text, "html.parser")
-            table = soup.find("table", {"class": "tb_base tb_dados"})
-            if not table:
-                raise ValueError("No table found on the page.")
+        soup = BeautifulSoup(response.text, "html.parser")
+        table = soup.find("table", {"class": "tb_base tb_dados"})
+        if not table:
+            raise ValueError("No table found on the page.")
 
-            data = parse_trade_table(table, year, current_type_label)
-            logger.info(
-                f"{len(data)} exportation records extracted for year {year} - {current_type_label}"
+        data = parse_trade_table(table, year, current_type_label)
+        logger.info(
+            f"{len(data)} exportation records extracted for year {year} - {current_type_label}"
+        )
+        
+        for item in data:
+            exportation = ExportationItem(
+                grape_type=item["Type"],
+                country=item["Country"],
+                quantity=item["Quantity (kg)"],
+                value=item["Value (US$)"]
             )
-         
-            for item in data:
-                exportation = ExportationItem(
-                    grape_type=item["Type"],
-                    country=item["Country"],
-                    quantity=item["Quantity (kg)"],
-                    value=item["Value (US$)"]
-                )
-                exportations.append(exportation)
+            exportations.append(exportation)
 
-            return ExportationResponse(exportations=exportations)
+        return ExportationResponse(exportations=exportations)
 
-        except Exception:
-            logger.warning(
-                f"Failed to scrape exportation data. Fallback enabled for exportation year {year} - {current_type_label}"
-            )
+    except Exception:
+        logger.warning(
+            f"Failed to scrape exportation data. Fallback enabled for exportation year {year} - {current_type_label}"
+        )
 
-            return fetch_exportations_from_db(year) #current_type_label
+        return fetch_exportations_from_db(year) #current_type_label

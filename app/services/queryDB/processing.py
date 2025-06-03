@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy import select
 from app.core.database import AsyncSessionLocal
-from app.models.models import Processing
+from app.models.processing import Processing
 from sqlalchemy.exc import SQLAlchemyError
 from app.schemas.schema import ProcessingItem, ProcessingResponse
 

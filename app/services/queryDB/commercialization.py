@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy import select
 from app.core.database import AsyncSessionLocal
-from app.models.models import Commercialization
+from app.models.commercialization import Commercialization
 from sqlalchemy.exc import SQLAlchemyError
 from app.schemas.schema import CommercializationItem, CommercializationResponse
 

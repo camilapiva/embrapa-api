@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy import select
 from app.core.database import AsyncSessionLocal
-from app.models.models import Importation
+from app.models.importation import Importation
 from sqlalchemy.exc import SQLAlchemyError
 from app.schemas.schema import ImportationItem, ImportationResponse
 

@@ -10,46 +10,45 @@ from app.services.queryDB.production import fetch_productions_from_db
 
 logger = setup_logger(__name__)
 
-class ProductionExtractor(BaseExtractor):
-    
-    def fetch_data(year: int) -> list[dict]:
-        url = f"{settings.production_url}&ano={year}"
-        productions=[]
 
-        try:
-            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
-            response = httpx.get(url, timeout=10, headers=headers)
-            response.raise_for_status()
+def fetch_production_data(year: int) -> list[dict]:
+    url = f"{settings.production_url}&ano={year}"
+    productions=[]
 
-            soup = BeautifulSoup(response.text, "html.parser")
-            table = soup.find("table", {"class": "tb_base tb_dados"})
+    try:
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        response = httpx.get(url, timeout=10, headers=headers)
+        response.raise_for_status()
 
-            if not table:
-                raise ValueError("No table with class 'tb_base tb_dados' found.")
+        soup = BeautifulSoup(response.text, "html.parser")
+        table = soup.find("table", {"class": "tb_base tb_dados"})
 
-            data = parse_category_table(
-                table=table,
-                year=year,
-                category_label="Category",
-                subcategory_label="Product",
-                quantity_label="Quantity (L.)",
+        if not table:
+            raise ValueError("No table with class 'tb_base tb_dados' found.")
+
+        data = parse_category_table(
+            table=table,
+            year=year,
+            category_label="Category",
+            subcategory_label="Product",
+            quantity_label="Quantity (L.)",
+        )
+
+        logger.info(f"{len(data)} production records extracted for year {year}.")
+        
+        for item in data:
+            production = ProductionItem(
+                category=item["Category"],
+                product=item["Product"],
+                quantity=item["Quantity (L.)"]
             )
+            productions.append(production)
 
-            logger.info(f"{len(data)} production records extracted for year {year}.")
-            
-            for item in data:
-                production = ProductionItem(
-                    category=item["Category"],
-                    product=item["Product"],
-                    quantity=item["Quantity (L.)"]
-                )
-                productions.append(production)
+        return ProductionResponse(productions=productions)
 
-            return ProductionResponse(productions=productions)
-
-        except Exception:
-            logger.warning(
-                f"Failed to scrape production data. Fallback enabled for production year {year}"
-            )
-            return fetch_productions_from_db(year)
-            # return load_production_csv(year)
+    except Exception:
+        logger.warning(
+            f"Failed to scrape production data. Fallback enabled for production year {year}"
+        )
+        return fetch_productions_from_db(year)
+        # return load_production_csv(year)

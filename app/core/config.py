@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int
     database_url: str
 
+    sync_database_url: str
+
     model_config = SettingsConfigDict(env_file=".env")
 
     # URL builders for each dataset

@@ -1,5 +1,4 @@
-from app.services.extractions.importation import ImportationExtractor
-from app.services.extractions.production import ProductionExtractor
+from app.services.extractions.importation import fetch_importation_data
 from sqlalchemy import delete
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,8 +9,7 @@ from app.models.importation import Importation
 async def populate_exportations(year: int):
 
     async with AsyncSessionLocal() as session:
-        extractor = ImportationExtractor()
-        response = extractor.fetch_data(year)
+        response = fetch_importation_data(year)
         data = response.importations
         try:
             await session.execute(delete(Importation).where(Importation.year == year))

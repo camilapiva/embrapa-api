@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, HTTPException, Depends
 from app.schemas.schema import ProductionResponse
-from app.services.extractions.production import ProductionExtractor, fetch_production_data
+from app.services.extractions.production import fetch_production_data
 from app.auth.dependencies import get_current_user
 from app.logging.logger import setup_logger
 
@@ -14,8 +14,7 @@ def get_production_data(year: int = Query(..., ge=1970, le=2023)) -> ProductionR
     Returns the production data for the specified year.
     Example: /production/?year=2022
     """
-    extractor = ProductionExtractor()
-    data = extractor.fetch_data(year)
+    data = fetch_production_data(year)
     if not data:
         logger.warning(f"Unable to fetch production data from Embrapa or fallback.")
         raise HTTPException(

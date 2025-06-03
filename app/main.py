@@ -11,6 +11,7 @@ from app.routes.exportation import router as exportation_router
 from app.routes.importation import router as importation_router
 from app.routes.commercialization import router as commercialization_router
 from app.routes.predict import router as predict_router
+from app.routes.populate_db import router as populate_db_router
 
 logger = setup_logger(__name__)
 
@@ -37,6 +38,7 @@ app.include_router(exportation_router)
 app.include_router(importation_router)
 app.include_router(commercialization_router)
 app.include_router(predict_router)
+app.include_router(populate_db_router)
 
 
 @app.get("/")

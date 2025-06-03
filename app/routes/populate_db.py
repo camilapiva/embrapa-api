@@ -5,9 +5,9 @@ from app.services.populateDB.populate_all import populate_db
 
 
 logger = setup_logger(__name__)
-router = APIRouter(prefix="/populate_db", tags=["Populate_DB"])
+router = APIRouter(prefix="/populate_db", tags=["Database Population"])
 
-@router.get("/populate_db", dependencies=[Depends(get_current_user)])
+@router.get("/", dependencies=[Depends(get_current_user)])
 async def populate_database():
     """
     Endpoint to populate the database with data from all years.

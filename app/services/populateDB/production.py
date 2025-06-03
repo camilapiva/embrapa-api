@@ -1,4 +1,4 @@
-from app.services.extractions.production import ProductionExtractor
+from app.services.extractions.production import fetch_production_data
 from sqlalchemy import delete
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -9,8 +9,7 @@ from app.models.production import Production
 async def populate_productions(year: int):
 
     async with AsyncSessionLocal() as session:
-        extractor = ProductionExtractor()
-        response = extractor.fetch_data(year)
+        response = fetch_production_data(year)
         data = response.productions
         try:
             await session.execute(delete(Production).where(Production.year == year))

@@ -2,15 +2,14 @@ from sqlalchemy import delete
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 from app.core.database import AsyncSessionLocal
-from app.services.extractions.commercialization import CommercializationExtractor 
-from app.models.models import Commercialization
+from app.services.extractions.commercialization import fetch_commercialization_data 
+from app.models.commercialization import Commercialization
 
 
 async def populate_commercializations(year: int):
 
     async with AsyncSessionLocal() as session:
-        extractor = CommercializationExtractor()
-        response = extractor.fetch_data(year)
+        response = fetch_commercialization_data(year)
         data = response.commercializations
         try:
             await session.execute(delete(Commercialization).where(Commercialization.year == year))

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from app.core.database import AsyncSessionLocal
+from app.core.database import SessionLocal
 from app.schemas.user import UserCreate, UserOut
 from app.auth.security import verify_password, create_access_token
 from app.repositories.user_repository import get_user_by_username, create_user
@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 def get_db():
-    db = AsyncSessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
