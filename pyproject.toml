@@ -20,7 +20,28 @@ beautifulsoup4 = "^4.13.4"
 pandas = "^2.2.3"
 python-dotenv = "^1.1.0"
 python-jose = "^3.3.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+bcrypt = "<4.1.0" 
+httpx = "^0.28.1"
+sqlalchemy = "^2.0"
+psycopg2-binary = "^2.9"
+notebook = "^7.4.3"
+matplotlib = "^3.10.3"
+seaborn = "^0.13.2"
+plotly = "^6.1.2"
+scikit-learn = "^1.6.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest-cov = "^6.1.1"
+alembic = "^1.13"
+black = "^25.1.0"
+flake8 = "^7.2.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+markers = [
+    "describe: marks a test group with a human-readable description"
+]

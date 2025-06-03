@@ -4,7 +4,7 @@ import time
 import os
 from bs4 import BeautifulSoup
 from app.core.config import settings
-from app.scraping.helpers import clean_quantity
+from app.services.helpers import clean_quantity
 from app.logging.logger import setup_logger
 from app.models.processing_types import GrapeTypeEnum
 
@@ -16,6 +16,7 @@ GRAPE_TYPES = {
     "subopt_03": GrapeTypeEnum.uvas_mesa.value,
     "subopt_04": GrapeTypeEnum.sem_classificacao.value,
 }
+
 
 def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
     url = f"{settings.processing_url}&subopcao={grape_type}&ano={year}"
@@ -47,33 +48,25 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
             if "tb_item" in td1.get("class", []):
                 current_category = label
                 if quantity_raw.strip():
-                    data.append({
+                    data.append(
+                        {
+                            "GrapeType": GRAPE_TYPES.get(grape_type, grape_type),
+                            "Category": current_category,
+                            "Cultivar": "Total",
+                            "Quantity (kg)": quantity,
+                            "Year": year,
+                        }
+                    )
+            elif "tb_subitem" in td1.get("class", []):
+                data.append(
+                    {
                         "GrapeType": GRAPE_TYPES.get(grape_type, grape_type),
                         "Category": current_category,
-                        "Cultivar": "Total",
-                        "Quantity (kg)": quantity,
-                        "Year": year
-                    })
-            elif "tb_subitem" in td1.get("class", []):
-                data.append({
-                    "GrapeType": GRAPE_TYPES.get(grape_type, grape_type),
-                    "Category": current_category,
-                    "Cultivar": label,
-                    "Quantity (kg)": clean_quantity(quantity_raw),
-                    "Year": year
-                })
-
-        total_row = table.select_one("tfoot tr")
-        if total_row:
-            tds = total_row.find_all("td")
-            if len(tds) == 2:
-                data.append({
-                    "GrapeType": GRAPE_TYPES.get(grape_type, grape_type),
-                    "Category": "Total",
-                    "Cultivar": tds[0].get_text(strip=True),
-                    "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
-                    "Year": year
-                })
+                        "Cultivar": label,
+                        "Quantity (kg)": clean_quantity(quantity_raw),
+                        "Year": year,
+                    }
+                )
 
         return pd.DataFrame(data)
 
@@ -81,13 +74,16 @@ def fetch_year_type_data(year: int, grape_type: str) -> pd.DataFrame:
         logger.error(f"Error processing for year {year} - type {grape_type}: {e}")
         return None
 
+
 def main():
     os.makedirs("data", exist_ok=True)
     all_data = []
 
     for year in range(1970, 2024):
         for grape_type in GRAPE_TYPES:
-            logger.info(f"Collecting processing data for year {year} - type {grape_type}...")
+            logger.info(
+                f"Collecting processing data for year {year} - type {grape_type}..."
+            )
             df = fetch_year_type_data(year, grape_type)
             if df is not None:
                 all_data.append(df)
@@ -98,6 +94,7 @@ def main():
         print("File saved to data/processing.csv")
     else:
         print("No processing data was collected.")
+
 
 if __name__ == "__main__":
     main()

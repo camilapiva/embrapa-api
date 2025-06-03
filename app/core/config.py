@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
     # General configuration
     project_name: str
@@ -10,9 +11,10 @@ class Settings(BaseSettings):
     base_url: str
 
     # JWT configuration
-    jwt_secret: str
+    secret_key: str
     jwt_algorithm: str
     access_token_expire_minutes: int
+    database_url: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
@@ -36,5 +38,6 @@ class Settings(BaseSettings):
     @property
     def exportation_url(self) -> str:
         return f"{self.base_url}?opcao=opt_06"
+
 
 settings = Settings()

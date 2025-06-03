@@ -1,23 +1,23 @@
+import pytest
 from fastapi.testclient import TestClient
-from app.main import app
 from app.models.exportation_types import ExportTypeEnum
 
-client = TestClient(app)
 
-def test_exportation_without_token():
-    response = client.get("/exportation/", params={"year": 2022, "type":
-    ExportTypeEnum.vinhos_de_mesa.value})
-    assert response.status_code in [401, 403]
+@pytest.mark.describe("Exportation route protection")
+class TestExportationAuth:
 
-def test_exportation_with_token():
-    login_response = client.post("/auth/login", data={"username": "admin","password": "admin"})
-    assert login_response.status_code == 200
-    token = login_response.json()["access_token"]
+    def test_without_token(self, client: TestClient):
+        response = client.get(
+            "/exportation/",
+            params={"year": 2022, "type": ExportTypeEnum.vinhos_de_mesa.value},
+        )
+        assert response.status_code == 401
+        assert response.json()["detail"] == "Not authenticated"
 
-    headers = {"Authorization": f"Bearer {token}"}
-    response = client.get("/exportation/", headers=headers, params={"year": 2022, "type":
-    ExportTypeEnum.vinhos_de_mesa.value
-    })
-
-    assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    def test_with_token(self, authorized_client: TestClient):
+        response = authorized_client.get(
+            "/exportation/",
+            params={"year": 2022, "type": ExportTypeEnum.vinhos_de_mesa.value},
+        )
+        assert response.status_code == 200
+        assert isinstance(response.json(), list)

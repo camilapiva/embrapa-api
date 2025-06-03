@@ -1,0 +1,15 @@
+Project Information,
+PROJECT_NAME=Embrapa API
+ENVIRONMENT=development?production
+DEBUG=True/False
+
+URL Embrapa,
+BASE_URL=http://vitibrasil.cnpuv.embrapa.br/index.php
+
+JWT,
+SECRET_KEY=techchallenge
+JWT_ALGORITHM=Algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+DB,
+DATABASE_URL=Database_example

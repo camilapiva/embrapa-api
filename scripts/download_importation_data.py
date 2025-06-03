@@ -4,7 +4,7 @@ import time
 import os
 from bs4 import BeautifulSoup
 from app.core.config import settings
-from app.scraping.helpers import clean_quantity
+from app.services.helpers import clean_quantity
 from app.logging.logger import setup_logger
 from app.models.importation_types import ImportTypeEnum
 
@@ -17,6 +17,7 @@ IMPORT_TYPES = {
     "subopt_04": ImportTypeEnum.uvas_passas.value,
     "subopt_05": ImportTypeEnum.suco_de_uva.value,
 }
+
 
 def fetch_year_import_data(year: int, import_type: str) -> pd.DataFrame:
     url = f"{settings.importation_url}&subopcao={import_type}&ano={year}"
@@ -45,31 +46,24 @@ def fetch_year_import_data(year: int, import_type: str) -> pd.DataFrame:
             quantity = clean_quantity(td2.get_text(strip=True))
             value = clean_quantity(td3.get_text(strip=True))
 
-            data.append({
-                "Type": current_type_label,
-                "Country": country,
-                "Quantity (kg)": quantity,
-                "Value (US$)": value,
-                "Year": year
-            })
-
-        total_row = table.select_one("tfoot tr")
-        if total_row:
-            tds = total_row.find_all("td")
-            if len(tds) == 3:
-                data.append({
+            data.append(
+                {
                     "Type": current_type_label,
-                    "Country": "Total",
-                    "Quantity (kg)": clean_quantity(tds[1].get_text(strip=True)),
-                    "Value (US$)": clean_quantity(tds[2].get_text(strip=True)),
-                    "Year": year
-                })
+                    "Country": country,
+                    "Quantity (kg)": quantity,
+                    "Value (US$)": value,
+                    "Year": year,
+                }
+            )
 
         return pd.DataFrame(data)
 
     except Exception as e:
-        logger.error(f"Error processing importation for year {year} - type {import_type}: {e}")
+        logger.error(
+            f"Error processing importation for year {year} - type {import_type}: {e}"
+        )
         return None
+
 
 def main():
     os.makedirs("data", exist_ok=True)
@@ -77,7 +71,9 @@ def main():
 
     for year in range(1970, 2024):
         for import_type in IMPORT_TYPES:
-            logger.info(f"Collecting importation data for year {year} - type {import_type}...")
+            logger.info(
+                f"Collecting importation data for year {year} - type {import_type}..."
+            )
             df = fetch_year_import_data(year, import_type)
             if df is not None:
                 all_data.append(df)
@@ -89,6 +85,7 @@ def main():
         logger.info("File saved to data/importation.csv")
     else:
         logger.warning("No importation data was collected.")
+
 
 if __name__ == "__main__":
     main()
