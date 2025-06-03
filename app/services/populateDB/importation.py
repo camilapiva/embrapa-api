@@ -4,7 +4,7 @@ from sqlalchemy import delete
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 from app.core.database import AsyncSessionLocal
-from app.models.models import Importation
+from app.models.importation import Importation
 
 
 async def populate_exportations(year: int):

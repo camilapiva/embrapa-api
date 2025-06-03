@@ -3,7 +3,7 @@ from sqlalchemy import delete
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 from app.core.database import AsyncSessionLocal
-from app.models.models import Processing
+from app.models.processing import Processing
 
 
 async def populate_processings(year: int):
