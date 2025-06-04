@@ -55,4 +55,4 @@ def fetch_processing_data(year: int, grape_type: str) -> list[dict]:
         logger.warning(
             f"Failed to scrape processing data. Fallback enabled for processing year {year} - type {grape_type}."
         )
-        return load_processing_csv(year, grape_type)
+        return load_processing_csv(year, GRAPE_TYPES.get(grape_type, grape_type))

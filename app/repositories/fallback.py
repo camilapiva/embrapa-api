@@ -10,7 +10,7 @@ def load_production_csv(year: int) -> list[dict]:
         df = pd.read_csv("data/production.csv")
         df = df[df["Year"] == year]
         logger.warning(f"Loaded fallback production data for year {year}.")
-        return df.replace({np.nan: None}).to_dict(orient="records")
+        return df.replace({pd.NA: None, pd.NaT: None, np.nan: None}).to_dict(orient="records")
     except Exception as e:
         logger.error(f"Failed to load production fallback CSV for year {year}: {e}")
         return []
@@ -23,7 +23,7 @@ def load_processing_csv(year: int, grape_type: str) -> list[dict]:
         logger.warning(
             f"Loaded fallback processing data for year {year} and type {grape_type}."
         )
-        return df.replace({np.nan: None}).to_dict(orient="records")
+        return df.replace({pd.NA: None, pd.NaT: None, np.nan: None}).to_dict(orient="records")
     except Exception as e:
         logger.error(
             f"Failed to load processing fallback CSV for year {year} and type ({grape_type}): {e}"
@@ -38,7 +38,7 @@ def load_exportation_csv(year: int, export_type: str) -> list[dict]:
         logger.warning(
             f"Loaded fallback exportation data for year {year} and type {export_type}."
         )
-        return df.replace({pd.NA: None, pd.NaT: None}).to_dict(orient="records")
+        return df.replace({pd.NA: None, pd.NaT: None, np.nan: None}).to_dict(orient="records")
     except Exception as e:
         logger.error(
             f"Failed to load exportation fallback CSV for year {year} and type {export_type}: {e}"
@@ -53,7 +53,7 @@ def load_importation_csv(year: int, import_type: str) -> list[dict]:
         logger.warning(
             f"Loaded fallback importation data for year {year} and type {import_type}."
         )
-        return df.replace({np.nan: None}).to_dict(orient="records")
+        return df.replace({pd.NA: None, pd.NaT: None, np.nan: None}).to_dict(orient="records")
     except Exception as e:
         logger.error(
             f"Failed to load importation fallback CSV for year {year} and type {import_type}: {e}"
@@ -66,7 +66,7 @@ def load_commercialization_csv(year: int) -> list[dict]:
         df = pd.read_csv("data/commercialization.csv")
         df = df[df["Year"] == year]
         logger.warning(f"Loaded fallback commercialization data for year {year}.")
-        return df.replace({np.nan: None}).to_dict(orient="records")
+        return df.replace({pd.NA: None, pd.NaT: None, np.nan: None}).to_dict(orient="records")
     except Exception as e:
         logger.error(
             f"Failed to load commercialization fallback CSV for year {year}: {e}"
