@@ -36,6 +36,7 @@ pytest-cov = "^6.1.1"
 alembic = "^1.13"
 black = "^25.1.0"
 flake8 = "^7.2.0"
+typer = {extras = ["all"], version = "^0.16.0"}
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
