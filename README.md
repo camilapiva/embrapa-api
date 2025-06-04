@@ -1,6 +1,6 @@
 # 📘 Embrapa Vitivinicultura API
 
-A RESTful API desenvolvida com **FastAPI** que disponibiliza dados vitivinícolas do Brasil provenientes do site da Embrapa Uva e Vinho, com fallback em arquivos CSV. O projeto inclui autenticação JWT, banco PostgreSQL, scraping com BeautifulSoup, testes automatizados, logging estruturado, protótipo de modelo de Machine Learning e análise exploratória em notebooks Jupyter. Hospedada no Render com documentação via Swagger.
+A RESTful API desenvolvida com **FastAPI** que disponibiliza dados vitivinícolas provenientes do site da Embrapa Uva e Vinho, com fallback em arquivos CSV. O projeto inclui autenticação JWT, banco PostgreSQL, scraping com BeautifulSoup, testes automatizados, logging estruturado, protótipo de modelo de Machine Learning e análise exploratória em notebooks Jupyter. Hospedada no Render com documentação via Swagger.
 
 ---
 
@@ -10,7 +10,7 @@ Este repositório corresponde à entrega final da primeira fase do curso de pós
 
 ### 📚 Fontes de dados:
 
-* **Site da Embrapa** com scraping de dados atualizados sobre vitivinicultura brasileira
+* **Site da Embrapa** com scraping de dados atualizados sobre vitivinicultura
 * **Fallback local** em arquivos CSV organizados por tipo de dado
 
 ---
@@ -48,6 +48,8 @@ embrapa_api/
 │   └── main.py           # Inicialização da API FastAPI
 ├── alembic/              # Scripts de migração do banco
 ├── data/                 # CSVs de fallback para scraping
+├── docs/                 # Documentos auxiliares
+│   └── architecture.jpeg # Diagrama da arquitetura da API
 ├── notebooks/            # Notebooks de EDA e ML
 ├── scripts/              # Scripts de scraping manual
 ├── tests/                # Testes com Pytest
@@ -55,6 +57,14 @@ embrapa_api/
 ├── pyproject.toml        # Configuração com Poetry
 └── manage.py             # CLI para tarefas utilitárias
 ```
+
+---
+
+## 📐 Arquitetura
+
+A arquitetura contempla desde o consumo de dados públicos com scraping e fallback, até a exposição via API RESTful com autenticação segura, persistência em banco de dados e suporte à predição via modelo de Machine Learning.
+
+![Arquitetura do Projeto](docs/architecture.jpeg)
 
 ---
 
